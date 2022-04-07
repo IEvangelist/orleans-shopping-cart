@@ -12,3 +12,6 @@ var client = new ClientBuilder()
     .Build();
 
 await client.Connect();
+
+// TODO: use the client.
+// Might create a UI, then the client would be used via DI.

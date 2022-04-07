@@ -8,32 +8,60 @@ namespace Orleans.ShoppingCart.Grains;
 public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
 {
     readonly IPersistentState<HashSet<CartItem>> _cart;
+    readonly IInventoryGrain _inventory;
 
     public ShoppingCartGrain(
         [PersistentState(
             stateName: "ShoppingCart",
             storageName: "CartState")]
-        IPersistentState<HashSet<CartItem>> cart) =>
-        _cart = cart;
+        IPersistentState<HashSet<CartItem>> cart,
+        IInventoryGrain inventory) =>
+        (_cart, _inventory) = (cart, inventory);
 
-    Task IShoppingCartGrain.AddItem(CartItem item)
+    async Task<bool> IShoppingCartGrain.AddItemAsync(ProductDetails product)
     {
-        _cart.State.Add(item);
-        return _cart.WriteStateAsync();
+        // TODO: I'm assuming that there is a more optimal and reliable way to do this.
+        // Should this be a transaction, should we rely on the leasing options Reuben mentioned?
+        // Are there atomic operations? What guarantees are made?
+
+        var availableQty =
+            await _inventory.GetProductAvailabilitySnapshotAsync(product.Id);
+
+        if (availableQty >= product.Quantity)
+        {
+            var availableProduct =
+                await _inventory.TakeProductAsync(product.Id, product.Quantity);
+
+            if (availableProduct is not null)
+            {
+                var item = ToCartItem(availableProduct);
+                _cart.State.Add(item);
+
+                await _cart.WriteStateAsync();
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    Task IShoppingCartGrain.Clear()
+    Task IShoppingCartGrain.ClearAsync()
     {
         _cart.State.Clear();
         return _cart.ClearStateAsync();
     }
 
-    Task<IList<CartItem>> IShoppingCartGrain.GetAllItems() =>
-        Task.FromResult<IList<CartItem>>(_cart.State.ToList());
+    Task<ISet<CartItem>> IShoppingCartGrain.GetAllItemsAsync() =>
+        Task.FromResult<ISet<CartItem>>(_cart.State.ToHashSet());
 
-    Task IShoppingCartGrain.RemoveItem(CartItem item)
+    async Task IShoppingCartGrain.RemoveItemAsync(ProductDetails product)
     {
-        _cart.State.Remove(item);
-        return _cart.WriteStateAsync();
+        await _inventory.ReturnProductAsync(product.Id, product.Quantity);
+
+        _cart.State.Remove(ToCartItem(product));
+        await _cart.WriteStateAsync();
     }
+
+    CartItem ToCartItem(ProductDetails product) =>
+        new(this.GetPrimaryKeyString(), product);
 }

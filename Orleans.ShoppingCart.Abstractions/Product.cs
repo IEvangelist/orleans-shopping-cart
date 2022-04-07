@@ -3,7 +3,7 @@
 namespace Orleans.ShoppingCart.Abstractions;
 
 [Serializable, Immutable]
-public sealed record class Product(
-    string ProductId,
+public record class Product(
+    string Id,
     string Name,
     int Quantity);

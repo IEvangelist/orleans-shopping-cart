@@ -3,22 +3,22 @@
 public interface IShoppingCartGrain : IGrainWithStringKey
 {
     /// <summary>
-    /// Adds the given <paramref name="item"/> to the shopping cart.
+    /// Adds the given <paramref name="product"/> to the shopping cart.
     /// </summary>
-    Task AddItem(CartItem item);
-    
+    Task<bool> AddItemAsync(ProductDetails product);
+
     /// <summary>
-    /// Removes the givne <paramref name="item" /> from the shopping cart.
+    /// Removes the givne <paramref name="product" /> from the shopping cart.
     /// </summary>
-    Task RemoveItem(CartItem item);
+    Task RemoveItemAsync(ProductDetails product);
     
     /// <summary>
     /// Gets all the items in the shopping cart.
     /// </summary>
-    Task<IList<CartItem>> GetAllItems();
+    Task<ISet<CartItem>> GetAllItemsAsync();
     
     /// <summary>
     /// Removes all items from the shopping cart.
     /// </summary>
-    Task Clear();
+    Task ClearAsync();
 }
