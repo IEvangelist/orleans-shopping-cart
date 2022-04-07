@@ -8,15 +8,12 @@ namespace Orleans.ShoppingCart.Grains;
 public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
 {
     readonly IPersistentState<HashSet<CartItem>> _cart;
-    readonly IInventoryGrain _inventory;
 
     public ShoppingCartGrain(
         [PersistentState(
             stateName: "ShoppingCart",
             storageName: "CartState")]
-        IPersistentState<HashSet<CartItem>> cart,
-        IInventoryGrain inventory) =>
-        (_cart, _inventory) = (cart, inventory);
+        IPersistentState<HashSet<CartItem>> cart) => _cart = cart;
 
     async Task<bool> IShoppingCartGrain.AddItemAsync(ProductDetails product)
     {
@@ -24,14 +21,12 @@ public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
         // Should this be a transaction, should we rely on the leasing options Reuben mentioned?
         // Are there atomic operations? What guarantees are made?
 
-        var availableQty =
-            await _inventory.GetProductAvailabilitySnapshotAsync(product.Id);
+        var products = GrainFactory.GetGrain<IProductGrain>(product.Id);
 
+        var availableQty = await products.GetProductAvailabilityAsync();
         if (availableQty >= product.Quantity)
         {
-            var availableProduct =
-                await _inventory.TakeProductAsync(product.Id, product.Quantity);
-
+            var availableProduct = await products.TakeProductAsync(product.Quantity);
             if (availableProduct is not null)
             {
                 var item = ToCartItem(availableProduct);
@@ -56,7 +51,8 @@ public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
 
     async Task IShoppingCartGrain.RemoveItemAsync(ProductDetails product)
     {
-        await _inventory.ReturnProductAsync(product.Id, product.Quantity);
+        var products = GrainFactory.GetGrain<IProductGrain>(product.Id);
+        await products.ReturnProductAsync(product.Quantity);
 
         _cart.State.Remove(ToCartItem(product));
         await _cart.WriteStateAsync();
