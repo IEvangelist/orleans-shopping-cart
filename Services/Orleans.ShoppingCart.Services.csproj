@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Orleans.ShoppingCart.Abstractions\Orleans.ShoppingCart.Abstractions.csproj" />
+    <ProjectReference Include="..\Abstractions\Orleans.ShoppingCart.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

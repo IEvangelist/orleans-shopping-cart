@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Orleans.ShoppingCart.Abstractions\Orleans.ShoppingCart.Abstractions.csproj" />
-    <ProjectReference Include="..\Orleans.ShoppingCart.Grains\Orleans.ShoppingCart.Grains.csproj" />
+    <ProjectReference Include="..\Abstractions\Orleans.ShoppingCart.Abstractions.csproj" />
+    <ProjectReference Include="..\Grains\Orleans.ShoppingCart.Grains.csproj" />
   </ItemGroup>
 
 </Project>
