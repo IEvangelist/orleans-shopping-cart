@@ -25,8 +25,15 @@ internal class ProductGrain : Grain, IProductGrain
         await _product.WriteStateAsync();
     }
 
-    async Task<ProductDetails?> IProductGrain.TakeProductAsync(int quantity)
+    async Task<(bool IsAvailable, ProductDetails? ProductDetails)> IProductGrain.TryTakeProductAsync(int quantity)
     {
+        if (_product.State.Quantity < quantity)
+        {
+            return (false, null);
+        }
+
+        var claimedProduct = _product.State with { Quantity = quantity };
+
         _product.State = _product.State with
         {
             Quantity = _product.State.Quantity - quantity
@@ -34,6 +41,6 @@ internal class ProductGrain : Grain, IProductGrain
 
         await _product.WriteStateAsync();
 
-        return _product.State with { Quantity = quantity };
+        return (true, claimedProduct);
     }
 }
