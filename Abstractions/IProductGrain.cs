@@ -2,7 +2,7 @@
 
 public interface IProductGrain : IGrainWithStringKey
 {
-    Task<ProductDetails?> TakeProductAsync(int quantity);
+    Task<(bool IsAvailable, ProductDetails? ProductDetails)> TryTakeProductAsync(int quantity);
 
     Task ReturnProductAsync(int quantity);
 

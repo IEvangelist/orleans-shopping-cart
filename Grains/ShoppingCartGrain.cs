@@ -23,18 +23,14 @@ public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
 
         var products = GrainFactory.GetGrain<IProductGrain>(product.Id);
 
-        var availableQty = await products.GetProductAvailabilityAsync();
-        if (availableQty >= product.Quantity)
+        var (isAvailable, claimedProduct) = await products.TryTakeProductAsync(product.Quantity);
+        if (isAvailable && claimedProduct is not null)
         {
-            var availableProduct = await products.TakeProductAsync(product.Quantity);
-            if (availableProduct is not null)
-            {
-                var item = ToCartItem(availableProduct);
-                _cart.State.Add(item);
+            var item = ToCartItem(claimedProduct);
+            _cart.State.Add(item);
 
-                await _cart.WriteStateAsync();
-                return true;
-            }
+            await _cart.WriteStateAsync();
+            return true;
         }
 
         return false;
