@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orleans.ShoppingCart.Silo", "Silo\Orleans.ShoppingCart.Silo.csproj", "{89101AD5-B75F-43B8-A9B0-604859AECFF0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orleans.ShoppingCart.Services", "Services\Orleans.ShoppingCart.Services.csproj", "{37CA3654-0AB5-4562-95AE-54FADBAAD577}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orleans.ShoppingCart.Abstractions", "Abstractions\Orleans.ShoppingCart.Abstractions.csproj", "{86BCD0BF-64CE-4C1E-9F5A-3A16DAFA68D3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orleans.ShoppingCart.Grains", "Grains\Orleans.ShoppingCart.Grains.csproj", "{1424AF70-CB15-41A7-8F6B-A889B22D394A}"
@@ -27,10 +25,6 @@ Global
 		{89101AD5-B75F-43B8-A9B0-604859AECFF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89101AD5-B75F-43B8-A9B0-604859AECFF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89101AD5-B75F-43B8-A9B0-604859AECFF0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37CA3654-0AB5-4562-95AE-54FADBAAD577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37CA3654-0AB5-4562-95AE-54FADBAAD577}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37CA3654-0AB5-4562-95AE-54FADBAAD577}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37CA3654-0AB5-4562-95AE-54FADBAAD577}.Release|Any CPU.Build.0 = Release|Any CPU
 		{86BCD0BF-64CE-4C1E-9F5A-3A16DAFA68D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{86BCD0BF-64CE-4C1E-9F5A-3A16DAFA68D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86BCD0BF-64CE-4C1E-9F5A-3A16DAFA68D3}.Release|Any CPU.ActiveCfg = Release|Any CPU

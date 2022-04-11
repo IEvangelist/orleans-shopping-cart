@@ -17,10 +17,6 @@ public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
 
     async Task<bool> IShoppingCartGrain.AddItemAsync(ProductDetails product)
     {
-        // TODO: I'm assuming that there is a more optimal and reliable way to do this.
-        // Should this be a transaction, should we rely on the leasing options Reuben mentioned?
-        // Are there atomic operations? What guarantees are made?
-
         var products = GrainFactory.GetGrain<IProductGrain>(product.Id);
 
         var (isAvailable, claimedProduct) = await products.TryTakeProductAsync(product.Quantity);
