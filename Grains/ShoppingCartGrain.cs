@@ -42,8 +42,8 @@ public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
         return _cart.ClearStateAsync();
     }
 
-    Task<ISet<CartItem>> IShoppingCartGrain.GetAllItemsAsync() =>
-        Task.FromResult<ISet<CartItem>>(_cart.State.ToHashSet());
+    Task<HashSet<CartItem>> IShoppingCartGrain.GetAllItemsAsync() =>
+        Task.FromResult<HashSet<CartItem>>(_cart.State.ToHashSet());
 
     async Task IShoppingCartGrain.RemoveItemAsync(ProductDetails product)
     {

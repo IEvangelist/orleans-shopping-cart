@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Orleans.Hosting;
 
 await Host.CreateDefaultBuilder(args)
@@ -7,8 +8,9 @@ await Host.CreateDefaultBuilder(args)
                 "shopping-cart",
                 options =>
                 {
+                    options.UseJson = true;
+                    var serviceUri = new Uri(context.Configuration["ServiceUri"]);
                     options.ConfigureTableServiceClient(
-                        context.Configuration["ShoppingCartConnectionString"]);
-                })
-            .UseTransactions())
+                        serviceUri, new DefaultAzureCredential());
+                }))
     .RunConsoleAsync();

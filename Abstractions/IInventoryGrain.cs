@@ -2,7 +2,7 @@
 
 public interface IInventoryGrain : IGrainWithStringKey
 {    
-    Task<ISet<Product>> GetAllProductsAsync();
+    Task<HashSet<Product>> GetAllProductsAsync();
 
     Task AddProductAsync(ProductDetails productDetails);
 }
