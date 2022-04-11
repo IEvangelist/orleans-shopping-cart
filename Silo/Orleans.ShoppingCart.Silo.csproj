@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.6.1" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="3.6.1" />
     <PackageReference Include="Microsoft.Orleans.Server" Version="3.6.1" />
     <PackageReference Include="Microsoft.Orleans.Transactions" Version="3.6.1" />
   </ItemGroup>

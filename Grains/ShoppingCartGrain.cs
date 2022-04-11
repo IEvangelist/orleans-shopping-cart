@@ -12,7 +12,7 @@ public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
     public ShoppingCartGrain(
         [PersistentState(
             stateName: "ShoppingCart",
-            storageName: "CartState")]
+            storageName: "shopping-cart")]
         IPersistentState<HashSet<CartItem>> cart) => _cart = cart;
 
     async Task<bool> IShoppingCartGrain.AddItemAsync(ProductDetails product)

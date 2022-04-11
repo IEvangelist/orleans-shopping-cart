@@ -1,21 +1,39 @@
-﻿using Orleans.ShoppingCart.Abstractions;
+﻿using Orleans.Runtime;
+using Orleans.ShoppingCart.Abstractions;
 
 namespace Orleans.ShoppingCart.Grains;
 
 internal class ProductGrain : Grain, IProductGrain
 {
-    Task<int> IProductGrain.GetProductAvailabilityAsync()
+    readonly IPersistentState<ProductDetails> _product;
+
+    public ProductGrain(
+        [PersistentState(
+            stateName: "Product",
+            storageName: "shopping-cart")]
+        IPersistentState<ProductDetails> product) => _product = product;
+
+    Task<int> IProductGrain.GetProductAvailabilityAsync() => Task.FromResult(_product.State.Quantity);
+
+    async Task IProductGrain.ReturnProductAsync(int quantity)
     {
-        throw new NotImplementedException();
+        _product.State = _product.State with
+        {
+            Quantity = _product.State.Quantity + quantity
+        };
+        
+        await _product.WriteStateAsync();
     }
 
-    Task IProductGrain.ReturnProductAsync(int quantity)
+    async Task<ProductDetails?> IProductGrain.TakeProductAsync(int quantity)
     {
-        throw new NotImplementedException();
-    }
+        _product.State = _product.State with
+        {
+            Quantity = _product.State.Quantity - quantity
+        };
 
-    Task<ProductDetails?> IProductGrain.TakeProductAsync(int quantity)
-    {
-        throw new NotImplementedException();
+        await _product.WriteStateAsync();
+
+        return _product.State with { Quantity = quantity };
     }
 }

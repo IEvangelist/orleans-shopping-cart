@@ -2,7 +2,13 @@ using Orleans.Hosting;
 
 await Host.CreateDefaultBuilder(args)
     .UseOrleans(
-        siloBuilder => siloBuilder.UseLocalhostClustering()
-            .AddMemoryGrainStorageAsDefault()
+        (context, siloBuilder) => siloBuilder.UseLocalhostClustering()
+            .AddAzureTableGrainStorage(
+                "shopping-cart",
+                options =>
+                {
+                    options.ConfigureTableServiceClient(
+                        context.Configuration["ShoppingCartConnectionString"]);
+                })
             .UseTransactions())
     .RunConsoleAsync();

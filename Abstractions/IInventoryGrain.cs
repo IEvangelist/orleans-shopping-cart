@@ -3,4 +3,6 @@
 public interface IInventoryGrain : IGrainWithStringKey
 {    
     Task<ISet<Product>> GetAllProductsAsync();
+
+    Task AddProductAsync(ProductDetails productDetails);
 }
