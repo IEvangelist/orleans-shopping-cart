@@ -32,13 +32,13 @@
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="shop">
                 <!-- Inventory that is available for purchase -->
-                <span class="oi oi-credit-card" aria-hidden="true"></span> Shop
+                <span class="oi oi-credit-card" aria-hidden="true"></span> Shop Inventory
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="products">
                 <!-- Manage (and create) available products -->
-                <span class="oi oi-spreadsheet" aria-hidden="true"></span> Products
+                <span class="oi oi-spreadsheet" aria-hidden="true"></span> Product Management
             </NavLink>
         </li>
     </ul>
@@ -50,8 +50,16 @@
     string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
     void ToggleNavMenu() => _collapseNavMenu = !_collapseNavMenu;
 
+    [Inject]
+    public ComponentStateChangedObserver Observer { get; set; } = null!;
+
     protected override async Task OnInitializedAsync()
     {
-        _count = await Cart.GetCartCountAsync();
+        Observer.OnStateChanged += UpdateCountAsync;
+
+        await UpdateCountAsync();
     }
+
+    async Task UpdateCountAsync() =>
+        _count = await Cart.GetCartCountAsync();
 }

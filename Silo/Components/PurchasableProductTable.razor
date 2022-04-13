@@ -14,9 +14,9 @@
     {
         <tr>
             <th scope="row">
-                <button class="btn btn-sm btn-secondary" title="Edit @(product.Name)?"
-                    @onclick=@(async _ => await OnEditAsync(product))>
-                    <span class="oi oi-pencil"></span>
+               <button class="btn btn-sm btn-success" title="Add a @(product.Name) to your cart?"
+                    @onclick=@(async _ => await AddToCartAsync((product.Id, 1)))>
+                    <span class="oi oi-plus"></span>
                 </button>
             </th>
             <td>@product.Name</td>
@@ -33,10 +33,10 @@
     public HashSet<ProductDetails> Products { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public EventCallback<ProductDetails> OnEditProduct { get; set; }
+    public EventCallback<(string ProductId, int Quantity)> OnAddedToCart { get; set; }
 
-    Task OnEditAsync(ProductDetails product) =>
-        OnEditProduct.HasDelegate
-            ? OnEditProduct.InvokeAsync(product)
+    Task AddToCartAsync((string ProductId, int Quantity) tuple) =>
+        OnAddedToCart.HasDelegate
+            ? OnAddedToCart.InvokeAsync(tuple)
             : Task.CompletedTask;
 }

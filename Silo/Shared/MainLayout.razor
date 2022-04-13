@@ -7,9 +7,47 @@
 <div class="main">
     <div class="top-row px-4">
         <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <div class="toast-container">
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                <div class="toast fade @(_toastClass)" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">@_titleText</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        @_messageText
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="content px-4">
         @Body
     </div>
 </div>
+
+@code {
+    string? _titleText;
+    string? _messageText;
+    string _toastClass = "hide";
+
+    [Inject]
+    public ToastService ToastService { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnToastedRequested += OnToastRequested;
+
+        base.OnInitialized();
+    }
+
+    Task OnToastRequested((string Title, string Message) tuple) =>
+        InvokeAsync(() =>
+        {
+            (_titleText, _messageText) = tuple;
+            _toastClass = "show";
+
+            StateHasChanged();
+        });
+}

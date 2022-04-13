@@ -1,8 +1,5 @@
 ﻿@page "/shop"
 
-<h3>Shop</h3>
-<PageTitle>Shop</PageTitle>
+<h3>Shop Inventory</h3>
 
-@code {
-
-}
+<PurchasableProductTable Products=@_products OnAddedToCart=@OnAddedToCart />

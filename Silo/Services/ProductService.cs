@@ -9,9 +9,10 @@ public sealed class ProductService : BaseClusterService
     }
 
     public Task<(bool IsAvailable, ProductDetails? ProductDetails)> TryTakeProductAsync(
-        int quantity) =>
+        string productId, int quantity) =>
         TryUseGrain<IProductGrain, Task<(bool IsAvailable, ProductDetails? ProductDetails)>>(
             products => products.TryTakeProductAsync(quantity),
+            productId,
             () => Task.FromResult<(bool IsAvailable, ProductDetails? ProductDetails)>(
                 (false, null)));
 

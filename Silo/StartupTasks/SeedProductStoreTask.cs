@@ -23,7 +23,7 @@
 
             var inventoryGrain = _grainFactory.GetGrain<IInventoryGrain>(0);
 
-            foreach (var product in faker.GenerateLazy(150))
+            foreach (var product in faker.GenerateLazy(30))
             {
                 await inventoryGrain.AddProductAsync(product);
             }

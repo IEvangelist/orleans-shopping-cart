@@ -10,6 +10,8 @@ public sealed class Startup
         services.AddSingleton<ShoppingCartService>();
         services.AddSingleton<InventoryService>();
         services.AddSingleton<ProductService>();
+        services.AddScoped<ComponentStateChangedObserver>();
+        services.AddSingleton<ToastService>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
