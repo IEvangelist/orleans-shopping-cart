@@ -1,16 +1,25 @@
-using Azure.Identity;
-using Orleans.Hosting;
-
 await Host.CreateDefaultBuilder(args)
     .UseOrleans(
-        (context, siloBuilder) => siloBuilder.UseLocalhostClustering()
-            .AddAzureTableGrainStorage(
-                "shopping-cart",
-                options =>
-                {
-                    options.UseJson = true;
-                    var serviceUri = new Uri(context.Configuration["ServiceUri"]);
-                    options.ConfigureTableServiceClient(
-                        serviceUri, new DefaultAzureCredential());
-                }))
+        (context, builder) =>
+        {
+            if (context.HostingEnvironment.IsDevelopment())
+            {
+                builder.UseLocalhostClustering()
+                    .AddMemoryGrainStorage("shopping-cart");
+            }
+            else
+            {
+                builder.AddAzureTableGrainStorage(
+                    "shopping-cart",
+                    options =>
+                    {
+                        options.UseJson = true;
+                        var serviceUri = new Uri(context.Configuration["ServiceUri"]);
+                        options.ConfigureTableServiceClient(
+                            serviceUri, new DefaultAzureCredential());
+                    });
+            }
+        })
+    .ConfigureWebHostDefaults(
+        webBuilder => webBuilder.UseStartup<Startup>())
     .RunConsoleAsync();

@@ -1,0 +1,10 @@
+﻿@page "/cart"
+
+<h3>Cart</h3>
+<PageTitle>Cart</PageTitle>
+
+@foreach (var item in _cartItems ?? new HashSet<CartItem>())
+{
+    <ShoppingCartItem Product=@item.Product 
+        OnRemoved=@OnItemRemoved />
+}

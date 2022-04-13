@@ -1,0 +1,46 @@
+﻿<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">Orleans Shopping Cart</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <!-- Details about how to use the various tabs -->
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="cart">
+                <!-- The shopping cart -->
+                <span class="oi oi-cart" aria-hidden="true">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        99+
+                        <span class="visually-hidden">unread messages</span>
+                    </span>
+                </span> Cart
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="shop">
+                <!-- Inventory that is available for purchase -->
+                <span class="oi oi-credit-card" aria-hidden="true"></span> Shop
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="products">
+                <!-- Manage (and create) available products -->
+                <span class="oi oi-spreadsheet" aria-hidden="true"></span> Products
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+@code {
+    bool _collapseNavMenu = true;
+    string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
+    void ToggleNavMenu() => _collapseNavMenu = !_collapseNavMenu;
+}

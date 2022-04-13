@@ -1,0 +1,25 @@
+﻿<div class="card" style="width: 18rem;">
+  <img src=@Product.ImageUrl class="card-img-top" alt=@Product.Name>
+  <div class="card-body">
+    <h5 class="card-title">@Product.Name</h5>
+    <p class="card-text">@Product.Description</p>
+    <button type="button" class="btn btn-danger"
+        @onclick=OnRemoveButtonClicked
+        title="Remove @(Product.Name) from cart">
+        <span class="oi oi-trash"></span>
+    </button>
+  </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public ProductDetails Product { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public EventCallback<ProductDetails> OnRemoved { get; set; }
+
+    private Task OnRemoveButtonClicked() =>
+        OnRemoved.HasDelegate
+            ? OnRemoved.InvokeAsync(Product)
+            : Task.CompletedTask;
+}
