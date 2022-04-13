@@ -3,4 +3,12 @@
 <h3>Products</h3>
 <PageTitle>Products</PageTitle>
 
+<div class="pb-3">
+    <button type="button" @onclick=@(async _ => await _modal.OpenAsync())
+        class="btn btn-primary btn-lg">
+        Create New Product?
+    </button>
+</div>
+
 <ProductTable Products=@_products />
+<CreateProductModal @ref=@_modal OnProductCreated=@OnProductCreated />
