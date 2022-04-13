@@ -15,8 +15,8 @@ public sealed class InventoryGrain : Grain, IInventoryGrain
             storageName: "shopping-cart")]
         IPersistentState<HashSet<ProductDetails>> products) => _products = products;
 
-    Task<HashSet<Product>> IInventoryGrain.GetAllProductsAsync() =>
-        Task.FromResult<HashSet<Product>>(_products.State.Cast<Product>().ToHashSet());
+    Task<HashSet<ProductDetails>> IInventoryGrain.GetAllProductsAsync() =>
+        Task.FromResult(_products.State.ToHashSet());
 
     async Task IInventoryGrain.AddProductAsync(ProductDetails productDetails)
     {

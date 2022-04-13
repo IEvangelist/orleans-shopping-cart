@@ -16,7 +16,12 @@ public interface IShoppingCartGrain : IGrainWithStringKey
     /// Gets all the items in the shopping cart.
     /// </summary>
     Task<HashSet<CartItem>> GetAllItemsAsync();
-    
+
+    /// <summary>
+    /// Gets the number of items in the shopping cart.
+    /// </summary>
+    Task<int> GetTotalItemsInCartAsync();
+
     /// <summary>
     /// Removes all items from the shopping cart.
     /// </summary>

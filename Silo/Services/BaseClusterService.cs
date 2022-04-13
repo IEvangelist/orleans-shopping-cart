@@ -3,7 +3,7 @@
 public class BaseClusterService
 {
     private readonly IHttpContextAccessor _httpContextAccessor = null!;
-    private readonly IClusterClient _client = null!;
+    protected readonly IClusterClient _client = null!;
 
     public BaseClusterService(
         IHttpContextAccessor httpContextAccessor, IClusterClient client) =>

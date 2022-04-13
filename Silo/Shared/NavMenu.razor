@@ -1,8 +1,14 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Orleans Shopping Cart</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+﻿@inject ShoppingCartService Cart
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">
+            <span class="ps-2">Orleans Shopping Cart</span>
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
@@ -16,12 +22,11 @@
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="cart">
                 <!-- The shopping cart -->
-                <span class="oi oi-cart" aria-hidden="true">
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        99+
-                        <span class="visually-hidden">unread messages</span>
-                    </span>
-                </span> Cart
+                <span class="oi oi-cart" aria-hidden="true"></span> <span class="pe-2">Cart</span>
+                <span class="badge rounded-pill bg-info">
+                    @_count
+                    <span class="visually-hidden">The number of items in your cart</span>
+                </span>
             </NavLink>
         </li>
         <li class="nav-item px-3">
@@ -40,7 +45,13 @@
 </div>
 
 @code {
+    int _count = 0;
     bool _collapseNavMenu = true;
     string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
     void ToggleNavMenu() => _collapseNavMenu = !_collapseNavMenu;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _count = await Cart.GetCartCountAsync();
+    }
 }

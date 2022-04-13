@@ -1,5 +1,29 @@
-﻿<h3>ProductTable</h3>
+﻿<table class="table table-hover table-sm table-striped">
+  <caption>Table of products</caption>
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var product in Products ?? new())
+    {
+        <tr>
+            <th scope="row">@product.Id</th>
+            <td>@product.Name</td>
+            <td>@product.Description</td>
+            <td>@product.Quantity.ToString("N0")</td>
+            <td>@product.UnitPrice.ToString("C2")</td>
+        </tr>
+    }
+    </tbody>
+</table>
 
 @code {
-
+    [Parameter]
+    public HashSet<ProductDetails> Products { get; set; } = null!;
 }

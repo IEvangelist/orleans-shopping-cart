@@ -1,8 +1,6 @@
-﻿@page "/products/{id}"
+﻿@page "/products/{id?}"
 
 <h3>Products</h3>
 <PageTitle>Products</PageTitle>
 
-@code {
-
-}
+<ProductTable Products=@_products />

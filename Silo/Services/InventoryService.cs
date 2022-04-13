@@ -8,13 +8,11 @@ public sealed class InventoryService : BaseClusterService
     {
     }
 
-    public Task<HashSet<Product>> GetAllProductsAsync() =>
-        TryUseGrain<IInventoryGrain, Task<HashSet<Product>>>(
-            inventory => inventory.GetAllProductsAsync(),
-            () => Task.FromResult(new HashSet<Product>()));
+    public Task<HashSet<ProductDetails>> GetAllProductsAsync() =>
+        _client.GetGrain<IInventoryGrain>(0)
+            .GetAllProductsAsync();        
 
     public Task CreateProductAsync(ProductDetails product) =>
-        TryUseGrain<IInventoryGrain, Task>(
-            inventory => inventory.AddProductAsync(product),
-            () => Task.CompletedTask);
+        _client.GetGrain<IInventoryGrain>(0)
+            .AddProductAsync(product);
 }

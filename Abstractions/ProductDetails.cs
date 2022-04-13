@@ -12,9 +12,14 @@ public sealed record class ProductDetails(
     int Quantity,
     decimal UnitPrice,
     string DetailsUrl,
-    string ImageUrl) : Product(Id, Name, Quantity)
+    string ImageUrl)
 {
     [JsonIgnore]
     public decimal TotalPrice =>
         Math.Round(Quantity * UnitPrice, 2);
+
+    public ProductDetails() 
+        : this(null!, null!, null!, default, 0, 0m, null!, null!)
+    {
+    }
 }

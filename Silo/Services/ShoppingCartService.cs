@@ -13,6 +13,11 @@ public sealed class ShoppingCartService : BaseClusterService
             cart => cart.GetAllItemsAsync(),
             () => Task.FromResult(new HashSet<CartItem>()));
 
+    public Task<int> GetCartCountAsync() =>
+        TryUseGrain<IShoppingCartGrain, Task<int>>(
+            cart => cart.GetTotalItemsInCartAsync(),
+            () => Task.FromResult(0));
+
     public Task EmptyCartAsync() =>
         TryUseGrain<IShoppingCartGrain, Task>(
             cart => cart.ClearAsync(), 
