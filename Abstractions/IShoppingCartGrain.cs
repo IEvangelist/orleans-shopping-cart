@@ -5,7 +5,7 @@ public interface IShoppingCartGrain : IGrainWithStringKey
     /// <summary>
     /// Adds the given <paramref name="product"/> to the shopping cart.
     /// </summary>
-    Task<bool> AddItemAsync(ProductDetails product);
+    Task<bool> AddOrUpdateItemAsync(int quantity, ProductDetails product);
 
     /// <summary>
     /// Removes the givne <paramref name="product" /> from the shopping cart.
@@ -25,5 +25,5 @@ public interface IShoppingCartGrain : IGrainWithStringKey
     /// <summary>
     /// Removes all items from the shopping cart.
     /// </summary>
-    Task ClearAsync();
+    Task EmptyCartAsync();
 }

@@ -1,7 +1,4 @@
-﻿using Orleans.Concurrency;
-using System.Text.Json.Serialization;
-
-namespace Orleans.ShoppingCart.Abstractions;
+﻿namespace Orleans.ShoppingCart.Abstractions;
 
 [Serializable, Immutable]
 public sealed record class ProductDetails

@@ -2,4 +2,6 @@
 
 <h3>Shop Inventory</h3>
 
-<PurchasableProductTable Products=@_products OnAddedToCart=@OnAddedToCart />
+<PurchasableProductTable Products=@_products 
+    IsInCart=@IsProductAlreadyInCart
+    OnAddedToCart=@OnAddedToCart />

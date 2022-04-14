@@ -7,5 +7,6 @@ internal static class HttpContextAccessorExtensions
         httpContextAccessor
             ?.HttpContext
             ?.User
-            .FindFirstValue(ClaimTypes.NameIdentifier);
+            .FindFirstValue(ClaimTypes.NameIdentifier)
+        ?? "demo-shared-user";
 }

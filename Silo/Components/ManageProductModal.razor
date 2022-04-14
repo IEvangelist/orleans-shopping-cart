@@ -33,14 +33,6 @@
                         <label for="price" class="form-label">Unit Price</label>
                         <InputNumber id="price" class="form-control" @bind-Value="Product.UnitPrice" />
                     </div>
-                    <div class="mb-3">
-                        <label for="imageUrl" class="form-label">Image URL</label>
-                        <InputText id="imageUrl" class="form-control" @bind-Value="Product.ImageUrl" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="detailsUrl" class="form-label">Details URL</label>
-                        <InputText id="detailsUrl" class="form-control" @bind-Value="Product.DetailsUrl" />
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick=@Close>Cancel</button>
@@ -66,7 +58,7 @@
     public ProductDetails Product { get; set; } = new();
 
     [Parameter, EditorRequired]
-    public EventCallback<ProductDetails> OnProductCreated { get; set; }
+    public EventCallback<ProductDetails> OnProductUpdated { get; set; }
 
     public void Open()
     {
@@ -88,12 +80,12 @@
 
     async Task OnValidSubmit()
     {
-        if (Product is not null && OnProductCreated.HasDelegate)
+        if (Product is not null && OnProductUpdated.HasDelegate)
         {
             try
             {
                 _isSaving = true;
-                await OnProductCreated.InvokeAsync(Product);
+                await OnProductUpdated.InvokeAsync(Product);
             }
             finally
             {

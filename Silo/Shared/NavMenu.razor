@@ -60,6 +60,10 @@
         await UpdateCountAsync();
     }
 
-    async Task UpdateCountAsync() =>
-        _count = await Cart.GetCartCountAsync();
+    Task UpdateCountAsync() =>
+        InvokeAsync(async () =>
+        {
+            _count = await Cart.GetCartCountAsync();
+            StateHasChanged();
+        });
 }

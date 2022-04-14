@@ -1,28 +1,25 @@
-﻿using Orleans.Concurrency;
-using Orleans.Runtime;
-using Orleans.ShoppingCart.Abstractions;
-
-namespace Orleans.ShoppingCart.Grains;
+﻿namespace Orleans.ShoppingCart.Grains;
 
 [Reentrant]
 public sealed class InventoryGrain : Grain, IInventoryGrain
 {
-    readonly IPersistentState<HashSet<ProductDetails>> _products;
-
+    readonly IPersistentState<Dictionary<string, ProductDetails>> _products;
+    
     public InventoryGrain(
         [PersistentState(
-            stateName: "Products",
+            stateName: "Inventory",
             storageName: "shopping-cart")]
-        IPersistentState<HashSet<ProductDetails>> products) => _products = products;
+        IPersistentState<Dictionary<string, ProductDetails>> products) => _products = products;
 
     Task<HashSet<ProductDetails>> IInventoryGrain.GetAllProductsAsync() =>
-        Task.FromResult(_products.State.ToHashSet());
-
-    async Task IInventoryGrain.AddProductAsync(ProductDetails productDetails)
+        Task.FromResult(_products.State.Values.ToHashSet());
+    
+    async Task IInventoryGrain.AddOrUpdateProductAsync(ProductDetails product)
     {
-        if (_products.State.Add(productDetails))
-        {
-            await _products.WriteStateAsync();
-        }
+        _products.State[product.Id] = product;
+        
+        await _products.WriteStateAsync();
+        await GrainFactory.GetGrain<IProductGrain>(product.Id)
+            .CreateOrUpdateProductAsync(product);
     }
 }

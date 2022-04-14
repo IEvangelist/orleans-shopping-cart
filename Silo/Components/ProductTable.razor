@@ -1,32 +1,33 @@
-﻿<table class="table table-hover table-sm table-striped">
-  <caption>Table of products</caption>
-  <thead class="table-dark">
-    <tr>
-      <th scope="col"></th>
-      <th scope="col">Name</th>
-      <th scope="col">Description</th>
-      <th scope="col">Quantity</th>
-      <th scope="col">Price</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var product in Products ?? new())
-    {
+﻿<div class="table-responsive">
+    <table class="table table-hover table-sm table-striped">
+      <thead class="table-dark">
         <tr>
-            <th scope="row">
-                <button class="btn btn-sm btn-secondary" title="Edit @(product.Name)?"
-                    @onclick=@(async _ => await OnEditAsync(product))>
-                    <span class="oi oi-pencil"></span>
-                </button>
-            </th>
-            <td>@product.Name</td>
-            <td>@product.Description</td>
-            <td>@product.Quantity.ToString("N0")</td>
-            <td>@product.UnitPrice.ToString("C2")</td>
+          <th scope="col"></th>
+          <th scope="col">Name</th>
+          <th scope="col">Description</th>
+          <th scope="col" class="text-end pe-5">Inventory Quantity</th>
+          <th scope="col" class="text-end pe-5">Price</th>
         </tr>
-    }
-    </tbody>
-</table>
+      </thead>
+      <tbody>
+        @foreach (var product in Products ?? new())
+        {
+            <tr>
+                <th scope="row">
+                    <button class="btn btn-sm btn-secondary" title="Edit @(product.Name)?"
+                        @onclick=@(async _ => await OnEditAsync(product))>
+                        <span class="oi oi-pencil"></span>
+                    </button>
+                </th>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td class="text-end pe-5">@product.Quantity.ToString("N0")</td>
+                <td class="text-end pe-5">@product.UnitPrice.ToString("C2")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
 
 @code {
     [Parameter]

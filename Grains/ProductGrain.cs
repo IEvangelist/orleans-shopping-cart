@@ -1,7 +1,4 @@
-﻿using Orleans.Runtime;
-using Orleans.ShoppingCart.Abstractions;
-
-namespace Orleans.ShoppingCart.Grains;
+﻿namespace Orleans.ShoppingCart.Grains;
 
 internal class ProductGrain : Grain, IProductGrain
 {
@@ -21,7 +18,7 @@ internal class ProductGrain : Grain, IProductGrain
         {
             Quantity = _product.State.Quantity + quantity
         };
-        
+
         await _product.WriteStateAsync();
     }
 
@@ -32,15 +29,20 @@ internal class ProductGrain : Grain, IProductGrain
             return (false, null);
         }
 
-        var claimedProduct = _product.State with { Quantity = quantity };
-
         _product.State = _product.State with
         {
             Quantity = _product.State.Quantity - quantity
         };
 
-        await _product.WriteStateAsync();
+        await GrainFactory.GetGrain<IInventoryGrain>(_product.State.Category.ToString())
+            .AddOrUpdateProductAsync(_product.State);
 
-        return (true, claimedProduct);
+        return (true, _product.State);
+    }
+
+    async Task IProductGrain.CreateOrUpdateProductAsync(ProductDetails productDetails)
+    {
+        _product.State = productDetails;
+        await _product.WriteStateAsync();
     }
 }

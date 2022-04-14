@@ -1,8 +1,8 @@
 ﻿namespace Orleans.ShoppingCart.Abstractions;
 
-public interface IInventoryGrain : IGrainWithIntegerKey
+public interface IInventoryGrain : IGrainWithStringKey
 {    
     Task<HashSet<ProductDetails>> GetAllProductsAsync();
     
-    Task AddProductAsync(ProductDetails productDetails);
+    Task AddOrUpdateProductAsync(ProductDetails productDetails);
 }

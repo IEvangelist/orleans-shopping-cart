@@ -1,29 +1,34 @@
-﻿using Orleans.Concurrency;
-using Orleans.Runtime;
-using Orleans.ShoppingCart.Abstractions;
-
-namespace Orleans.ShoppingCart.Grains;
+﻿namespace Orleans.ShoppingCart.Grains;
 
 [Reentrant]
 public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
 {
-    readonly IPersistentState<HashSet<CartItem>> _cart;
+    readonly IPersistentState<Dictionary<string, CartItem>> _cart;
 
     public ShoppingCartGrain(
         [PersistentState(
             stateName: "ShoppingCart",
             storageName: "shopping-cart")]
-        IPersistentState<HashSet<CartItem>> cart) => _cart = cart;
+        IPersistentState<Dictionary<string, CartItem>> cart) => _cart = cart;
 
-    async Task<bool> IShoppingCartGrain.AddItemAsync(ProductDetails product)
+    async Task<bool> IShoppingCartGrain.AddOrUpdateItemAsync(int quantity, ProductDetails product)
     {
         var products = GrainFactory.GetGrain<IProductGrain>(product.Id);
 
-        var (isAvailable, claimedProduct) = await products.TryTakeProductAsync(product.Quantity);
+        // When updating an item, the requested quantity is 
+        // adjusted to account for the difference in inventory.        
+        int? adjustedQuantity = null;
+        if (_cart.State.TryGetValue(product.Id, out var existingItem))
+        {
+            adjustedQuantity = quantity - existingItem.Quantity;
+        }
+
+        var (isAvailable, claimedProduct) =
+            await products.TryTakeProductAsync(adjustedQuantity ?? quantity);
         if (isAvailable && claimedProduct is not null)
         {
-            var item = ToCartItem(claimedProduct);
-            _cart.State.Add(item);
+            var item = ToCartItem(quantity, claimedProduct);
+            _cart.State[claimedProduct.Id] = item;
 
             await _cart.WriteStateAsync();
             return true;
@@ -32,14 +37,14 @@ public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
         return false;
     }
 
-    Task IShoppingCartGrain.ClearAsync()
+    Task IShoppingCartGrain.EmptyCartAsync()
     {
         _cart.State.Clear();
         return _cart.ClearStateAsync();
     }
 
     Task<HashSet<CartItem>> IShoppingCartGrain.GetAllItemsAsync() =>
-        Task.FromResult<HashSet<CartItem>>(_cart.State.ToHashSet());
+        Task.FromResult(_cart.State.Values.ToHashSet());
 
     Task<int> IShoppingCartGrain.GetTotalItemsInCartAsync() =>
         Task.FromResult(_cart.State.Count);
@@ -49,10 +54,12 @@ public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
         var products = GrainFactory.GetGrain<IProductGrain>(product.Id);
         await products.ReturnProductAsync(product.Quantity);
 
-        _cart.State.Remove(ToCartItem(product));
-        await _cart.WriteStateAsync();
+        if (_cart.State.Remove(product.Id))
+        {
+            await _cart.WriteStateAsync();
+        }
     }
 
-    CartItem ToCartItem(ProductDetails product) =>
-        new(this.GetPrimaryKeyString(), product);
+    CartItem ToCartItem(int quantity, ProductDetails product) =>
+        new(this.GetPrimaryKeyString(), quantity, product);
 }

@@ -10,14 +10,34 @@ public sealed partial class Cart
     [Inject]
     public ComponentStateChangedObserver Observer { get; set; } = null!;
 
-    protected override async Task OnInitializedAsync() =>
-        _cartItems = await ShoppingCart.GetAllItemsAsync();
+    protected override Task OnInitializedAsync() => GetCartItemsAsync();
 
-    private async Task OnItemRemoved(ProductDetails product)
+    Task GetCartItemsAsync() =>
+        InvokeAsync(async () =>
+        {
+            _cartItems = await ShoppingCart.GetAllItemsAsync();
+            StateHasChanged();
+        });
+
+    async Task OnItemRemovedAsync(ProductDetails product)
     {
         await ShoppingCart.RemoveItemAsync(product);
         await Observer.NotifyStateChangedAsync();
 
         _ = _cartItems?.RemoveWhere(item => item.Product == product);
+    }
+
+    async Task OnItemUpdatedAsync((int Quantity, ProductDetails Product) tuple)
+    {
+        await ShoppingCart.AddOrUpdateItemAsync(tuple.Quantity, tuple.Product);
+        await GetCartItemsAsync();
+    }
+
+    async Task EmptyCartAsync()
+    {
+        await ShoppingCart.EmptyCartAsync();
+        await Observer.NotifyStateChangedAsync();
+
+        _cartItems?.Clear();
     }
 }

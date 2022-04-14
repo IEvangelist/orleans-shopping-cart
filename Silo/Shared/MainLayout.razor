@@ -7,18 +7,20 @@
 <div class="main">
     <div class="top-row px-4">
         <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        <div class="toast-container">
-            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-                <div class="toast fade @(_toastClass)" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-header">
-                        <strong class="me-auto">@_titleText</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    <div class="toast-body">
-                        @_messageText
-                    </div>
+        <div class="toast-container position-absolute p-3 top-0 end-0" style="z-index: 100">
+        @foreach (var toast in _toasts)
+        {
+             <div class="toast fade show text-white bg-success fs-6" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">@toast.Title</strong>
+                    <button type="button" class="btn-close" 
+                        aria-label="Close" @onclick=@(_ => DismissToast(toast))></button>
                 </div>
-            </div>
+                <div class="toast-body text-dark bg-light">
+                    @toast.Message
+                </div>
+            </div>   
+        }
         </div>
     </div>
 
@@ -28,9 +30,7 @@
 </div>
 
 @code {
-    string? _titleText;
-    string? _messageText;
-    string _toastClass = "hide";
+    HashSet<ToastInfo> _toasts = new();
 
     [Inject]
     public ToastService ToastService { get; set; } = null!;
@@ -45,9 +45,22 @@
     Task OnToastRequested((string Title, string Message) tuple) =>
         InvokeAsync(() =>
         {
-            (_titleText, _messageText) = tuple;
-            _toastClass = "show";
+            var (title, message) = tuple;
+            var toast = new ToastInfo(title, message);
+            _toasts.Add(toast);
 
             StateHasChanged();
+            
+            // Fire and forget, hide toast after 5 seconds.
+            _ = Task.Delay(TimeSpan.FromSeconds(5))
+                .ContinueWith(_ => InvokeAsync(() =>
+                {
+                    DismissToast(toast);
+                    StateHasChanged();
+                }));
         });
+    
+    void DismissToast(ToastInfo toast) => _toasts.Remove(toast);
+    
+    readonly record struct ToastInfo(string Title, string Message);
 }
