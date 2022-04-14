@@ -12,14 +12,14 @@ internal class ProductGrain : Grain, IProductGrain
 
     Task<int> IProductGrain.GetProductAvailabilityAsync() => Task.FromResult(_product.State.Quantity);
 
+    Task<ProductDetails> IProductGrain.GetProductDetailsAsync() => Task.FromResult(_product.State);
+
     async Task IProductGrain.ReturnProductAsync(int quantity)
     {
-        _product.State = _product.State with
+        await UpdateStateAsync(_product.State with
         {
             Quantity = _product.State.Quantity + quantity
-        };
-
-        await _product.WriteStateAsync();
+        });
     }
 
     async Task<(bool IsAvailable, ProductDetails? ProductDetails)> IProductGrain.TryTakeProductAsync(int quantity)
@@ -29,20 +29,38 @@ internal class ProductGrain : Grain, IProductGrain
             return (false, null);
         }
 
-        _product.State = _product.State with
+        var updatedState = _product.State with
         {
             Quantity = _product.State.Quantity - quantity
         };
 
-        await GrainFactory.GetGrain<IInventoryGrain>(_product.State.Category.ToString())
-            .AddOrUpdateProductAsync(_product.State);
+        await UpdateStateAsync(updatedState);
 
         return (true, _product.State);
     }
 
     async Task IProductGrain.CreateOrUpdateProductAsync(ProductDetails productDetails)
     {
-        _product.State = productDetails;
+        await UpdateStateAsync(productDetails);
+    }
+
+    private async Task UpdateStateAsync(ProductDetails value)
+    {
+        var oldCategory = _product.State.Category;
+
+        // Write the new state.
+        _product.State = value;
         await _product.WriteStateAsync();
+
+        // Update the inventory grain.
+        var inventoryGrain = GrainFactory.GetGrain<IInventoryGrain>(_product.State.Category.ToString());
+        await inventoryGrain.AddOrUpdateProductAsync(value);
+
+        if (oldCategory != value.Category)
+        {
+            // Category changed! Remove the product from the old inventory grain.
+            var oldInventoryGrain = GrainFactory.GetGrain<IInventoryGrain>(oldCategory.ToString());
+            await oldInventoryGrain.RemoveProductAsync(value.Id);
+        }
     }
 }

@@ -9,4 +9,6 @@ public interface IProductGrain : IGrainWithStringKey
     Task<int> GetProductAvailabilityAsync();
 
     Task CreateOrUpdateProductAsync(ProductDetails productDetails);
+
+    Task<ProductDetails> GetProductDetailsAsync();
 }

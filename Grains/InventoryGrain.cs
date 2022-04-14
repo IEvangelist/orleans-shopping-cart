@@ -3,23 +3,50 @@
 [Reentrant]
 public sealed class InventoryGrain : Grain, IInventoryGrain
 {
-    readonly IPersistentState<Dictionary<string, ProductDetails>> _products;
+    readonly IPersistentState<HashSet<string>> _productIds;
+    readonly Dictionary<string, ProductDetails> _productCache = new();
     
     public InventoryGrain(
         [PersistentState(
             stateName: "Inventory",
             storageName: "shopping-cart")]
-        IPersistentState<Dictionary<string, ProductDetails>> products) => _products = products;
+        IPersistentState<HashSet<string>> state) => _productIds = state;
+
+    public override async Task OnActivateAsync()
+    {
+        await PopulateProductCache();
+    }
 
     Task<HashSet<ProductDetails>> IInventoryGrain.GetAllProductsAsync() =>
-        Task.FromResult(_products.State.Values.ToHashSet());
+        Task.FromResult(_productCache.Values.ToHashSet());
     
     async Task IInventoryGrain.AddOrUpdateProductAsync(ProductDetails product)
     {
-        _products.State[product.Id] = product;
+        _productIds.State.Add(product.Id);
+        _productCache[product.Id] = product;
         
-        await _products.WriteStateAsync();
-        await GrainFactory.GetGrain<IProductGrain>(product.Id)
-            .CreateOrUpdateProductAsync(product);
+        await _productIds.WriteStateAsync();
+    }
+
+    public async Task RemoveProductAsync(string productId)
+    {
+        _productIds.State.Remove(productId);
+        _productCache.Remove(productId);
+        
+        await _productIds.WriteStateAsync();
+    }
+
+    private async Task PopulateProductCache()
+    {
+        if (_productIds.State is not { Count: > 0 }) return;
+
+        // Fetch the products in parallel.
+        await Parallel.ForEachAsync(
+            _productIds.State,
+            async (id, _) =>
+            {
+                var productGrain = GrainFactory.GetGrain<IProductGrain>(id);
+                _productCache[id] = await productGrain.GetProductDetailsAsync();
+            });
     }
 }
