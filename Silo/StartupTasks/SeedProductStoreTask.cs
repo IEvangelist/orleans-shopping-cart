@@ -10,18 +10,11 @@
         async Task IStartupTask.Execute(CancellationToken cancellationToken)
         {            
             var faker = new ProductDetails().GetBogusFaker();
-            var inventoryGrains = Enum.GetValues<ProductCategory>()
-                .Select(category => (
-                    Category: category,
-                    Grain: _grainFactory.GetGrain<IInventoryGrain>(category.ToString())))
-                .ToDictionary(
-                    keySelector: t => t.Category,
-                    elementSelector: t => t.Grain);
 
             foreach (var product in faker.GenerateLazy(50))
             {
-                var grain = inventoryGrains[product.Category];
-                await grain.AddOrUpdateProductAsync(product);
+                var productGrain = _grainFactory.GetGrain<IProductGrain>(product.Id);
+                await productGrain.CreateOrUpdateProductAsync(product);
             }
         }
     }

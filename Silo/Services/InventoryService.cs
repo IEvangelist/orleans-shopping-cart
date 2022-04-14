@@ -22,6 +22,5 @@ public sealed class InventoryService : BaseClusterService
     }
 
     public Task CreateOrUpdateProductAsync(ProductDetails product) =>
-        _client.GetGrain<IInventoryGrain>(product.Category.ToString())
-            .AddOrUpdateProductAsync(product);
+        _client.GetGrain<IProductGrain>(product.Id).CreateOrUpdateProductAsync(product);
 }
