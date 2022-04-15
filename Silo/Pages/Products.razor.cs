@@ -13,6 +13,9 @@ public sealed partial class Products
     [Inject]
     public InventoryService InventoryService { get; set; } = null!;
 
+    [Inject]
+    public ProductService ProductService { get; set; } = null!;
+
     protected override async Task OnInitializedAsync() =>
         _products = await InventoryService.GetAllProductsAsync();
 
@@ -35,7 +38,7 @@ public sealed partial class Products
 
     async Task OnProductUpdated(ProductDetails product)
     {
-        await InventoryService.CreateOrUpdateProductAsync(product);
+        await ProductService.CreateOrUpdateProductAsync(product);
         _products = await InventoryService.GetAllProductsAsync();
 
         _modal?.Close();

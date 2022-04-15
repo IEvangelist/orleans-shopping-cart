@@ -8,6 +8,9 @@ public sealed class ProductService : BaseClusterService
     {
     }
 
+    public Task CreateOrUpdateProductAsync(ProductDetails product) =>
+        _client.GetGrain<IProductGrain>(product.Id).CreateOrUpdateProductAsync(product);
+
     public Task<(bool IsAvailable, ProductDetails? ProductDetails)> TryTakeProductAsync(
         string productId, int quantity) =>
         TryUseGrain<IProductGrain, Task<(bool IsAvailable, ProductDetails? ProductDetails)>>(

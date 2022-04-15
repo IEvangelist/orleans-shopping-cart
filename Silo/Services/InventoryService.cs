@@ -20,7 +20,4 @@ public sealed class InventoryService : BaseClusterService
 
         return new HashSet<ProductDetails>(allProducts.SelectMany(products => products));
     }
-
-    public Task CreateOrUpdateProductAsync(ProductDetails product) =>
-        _client.GetGrain<IProductGrain>(product.Id).CreateOrUpdateProductAsync(product);
 }
