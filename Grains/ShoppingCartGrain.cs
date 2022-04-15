@@ -14,9 +14,7 @@ public sealed class ShoppingCartGrain : Grain, IShoppingCartGrain
     async Task<bool> IShoppingCartGrain.AddOrUpdateItemAsync(int quantity, ProductDetails product)
     {
         var products = GrainFactory.GetGrain<IProductGrain>(product.Id);
-
-        // When updating an item, the requested quantity is 
-        // adjusted to account for the difference in inventory.        
+   
         int? adjustedQuantity = null;
         if (_cart.State.TryGetValue(product.Id, out var existingItem))
         {
