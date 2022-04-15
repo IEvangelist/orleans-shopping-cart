@@ -5,26 +5,23 @@ public sealed class InventoryGrain : Grain, IInventoryGrain
 {
     readonly IPersistentState<HashSet<string>> _productIds;
     readonly Dictionary<string, ProductDetails> _productCache = new();
-    
+
     public InventoryGrain(
         [PersistentState(
             stateName: "Inventory",
             storageName: "shopping-cart")]
         IPersistentState<HashSet<string>> state) => _productIds = state;
 
-    public override async Task OnActivateAsync()
-    {
-        await PopulateProductCache();
-    }
+    public override Task OnActivateAsync() => PopulateProductCacheAsync();
 
     Task<HashSet<ProductDetails>> IInventoryGrain.GetAllProductsAsync() =>
         Task.FromResult(_productCache.Values.ToHashSet());
-    
+
     async Task IInventoryGrain.AddOrUpdateProductAsync(ProductDetails product)
     {
         _productIds.State.Add(product.Id);
         _productCache[product.Id] = product;
-        
+
         await _productIds.WriteStateAsync();
     }
 
@@ -32,13 +29,16 @@ public sealed class InventoryGrain : Grain, IInventoryGrain
     {
         _productIds.State.Remove(productId);
         _productCache.Remove(productId);
-        
+
         await _productIds.WriteStateAsync();
     }
 
-    private async Task PopulateProductCache()
+    private async Task PopulateProductCacheAsync()
     {
-        if (_productIds.State is not { Count: > 0 }) return;
+        if (_productIds.State is not { Count: > 0 })
+        {
+            return;
+        }
 
         // Fetch the products in parallel.
         await Parallel.ForEachAsync(
