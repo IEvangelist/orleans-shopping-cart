@@ -35,12 +35,11 @@ public sealed class InventoryGrain : Grain, IInventoryGrain
 
     private async Task PopulateProductCacheAsync()
     {
-        if (_productIds.State is not { Count: > 0 })
+        if (_productIds is not { State.Count: > 0 })
         {
             return;
         }
 
-        // Fetch the products in parallel.
         await Parallel.ForEachAsync(
             _productIds.State,
             async (id, _) =>
