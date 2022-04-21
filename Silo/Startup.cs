@@ -1,9 +1,10 @@
-﻿namespace Orleans.ShoppingCart.Silo;
+namespace Orleans.ShoppingCart.Silo;
 
 public sealed class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddMudServices();
         services.AddRazorPages();
         services.AddServerSideBlazor();
         services.AddHttpContextAccessor();
@@ -12,6 +13,8 @@ public sealed class Startup
         services.AddSingleton<ProductService>();
         services.AddScoped<ComponentStateChangedObserver>();
         services.AddSingleton<ToastService>();
+        services.AddSessionStorageServices();
+        services.AddLocalStorageServices();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
