@@ -2,7 +2,7 @@ param name string
 param location string
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: toLower('${name}storage')
+  name: concat(replace(name, '-resourcegroup', ''), 'storage'),
   location: location
   kind: 'StorageV2'
   sku: {
