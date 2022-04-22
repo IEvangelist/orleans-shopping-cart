@@ -14,10 +14,10 @@ await Host.CreateDefaultBuilder(args)
                     "shopping-cart",
                     options =>
                     {
+                        const string key = "ORLEANS_AZURE_STORAGE_CONNECTION_STRING";
+                        var connectionString = context.Configuration[key];
+                        options.ConfigureTableServiceClient(connectionString);
                         options.UseJson = true;
-                        var serviceUri = new Uri(context.Configuration["ServiceUri"]);
-                        options.ConfigureTableServiceClient(
-                            serviceUri, new DefaultAzureCredential());
                     });
             }
         })
