@@ -2,7 +2,7 @@ param name string = resourceGroup().name
 param location string = resourceGroup().location
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: concat(replace(name, '-resourcegroup', ''), 'storage'),
+  name: '${replace(name, '-resourcegroup', '')}storage'
   location: location
   kind: 'StorageV2'
   sku: {
