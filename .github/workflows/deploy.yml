@@ -7,6 +7,7 @@ on:
 
 env:
   AZURE_RESOURCE_GROUP_NAME: orleans-resourcegroup
+  AZURE_RESOURCE_GROUP_LOCATION: centralus
 
 jobs:
   build-and-deploy:
@@ -29,9 +30,14 @@ jobs:
     
     - name: Flex bicep deployment initiation
       run: |
-        az deployment group create --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME  }} --template-file '.github/workflows/flex/main.bicep'
+        az deployment group create \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME  }} \
+          --template-file '.github/workflows/flex/main.bicep'
+          --parameters '.github/workflows/flex/bicep.params.json'
 
     - name: Webapp deploy
       run: |
-        az webapp deploy -n "${{ env.AZURE_RESOURCE_GROUP_NAME  }}-silo" -g ${{ env.AZURE_RESOURCE_GROUP_NAME  }} --src-path silo.zip
+        az webapp deploy -n "${{ env.AZURE_RESOURCE_GROUP_NAME  }}-silo" \
+          -g ${{ env.AZURE_RESOURCE_GROUP_NAME  }} \
+          --src-path silo.zip
 
