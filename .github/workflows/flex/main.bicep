@@ -1,8 +1,8 @@
-param name string
-param location string
+param name string = resourceGroup().name
+param location string = resourceGroup().location
 
 module storage 'storage.bicep' = {
-  name: toLower('${name}storage')
+  name: toLower('${name}strg')
   params: {
     name: name
     location: location
@@ -19,7 +19,7 @@ var shared_config = [
 var silo_config = [
   {
     name: 'ORLEANS_SILO_NAME'
-    value: 'Orleans Shopping Cart'
+    value: 'Orleans Silo'
   }
 ]
 

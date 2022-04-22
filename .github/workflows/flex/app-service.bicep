@@ -1,8 +1,8 @@
-param name string
+param name string = resourceGroup().name
+param location string = resourceGroup().location
 param envVars array = []
 param appServicePlanId string
 param vnetSubnetId string
-param location string 
 
 resource app_service 'Microsoft.Web/sites@2021-03-01' = {
   name: name
