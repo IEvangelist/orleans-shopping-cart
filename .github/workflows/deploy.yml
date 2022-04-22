@@ -1,0 +1,53 @@
+# actions/checkout
+# dotnet publish
+# azure/login
+# azure/cli
+# az group create -l $location -n $resourceBaseName
+# az deployment group create --resource-group $resourceBaseName --template-file 'deploy/main.bicep'
+# az webapp deploy -n "$($resourceBaseName)-silo" -g $resourceBaseName --src-path silo.zip
+# az webapp restart -n "$($resourceBaseName)-silo" -g $resourceBaseName
+
+name: Deploy to Azure App Service
+
+on: push
+
+env:
+  AZURE_RESOURCE_GROUP: dotnet-hearts-azure # Your Azure resource group's name  
+  AZURE_RESOURCE_LOCATION: centralus        # Your Azure resource group's location  
+  AZURE_WEBAPP_NAME: orleansshoppingcart    # Your application's name
+  AZURE_APP_PLAN: orleansresourcesplan      # Your App service plan's name
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET 6.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore dependencies, build and publish shopping cart app
+      run: dotnet publish ./Silo/Orleans.ShoppingCart.Silo.csproj
+
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS  }}
+        
+    # Provision a new Web App
+    - name: Azure CLI script to create a new Web App for Container
+      uses: azure/cli@v1
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az account show
+          az webapp create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --plan ${{ env.AZURE_APP_PLAN }} --name ${{ env.AZURE_WEBAPP_NAME }}  -i nginx
+          
+    - uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.AZURE_WEBAPP_NAME }} 
+        images: '${{ env.CONTAINER_REGISTRY }}/app:latest'
+
+
+
