@@ -26,7 +26,7 @@ var silo_config = [
 module logs 'logs-and-insights.bicep' = {
   name: 'logs-and-insights'
   params: {
-    baseName: name
+    name: name
     location: location
   }
 }
