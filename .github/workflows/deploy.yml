@@ -31,9 +31,9 @@ jobs:
     - name: Flex bicep deployment initiation
       run: |
         az deployment group create \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME  }} \
-          --template-file '.github/workflows/flex/main.bicep'
-          --parameters '.github/workflows/flex/bicep.params.json'
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME }} \
+          --template-file '.github/workflows/flex/main.bicep' \
+          --parameters name=${{ env.AZURE_RESOURCE_GROUP_NAME }} location=${{ env.AZURE_RESOURCE_GROUP_LOCATION }}
 
     - name: Webapp deploy
       run: |
