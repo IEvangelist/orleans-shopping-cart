@@ -20,13 +20,13 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
   }
 }
 
-// resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
-//   name: '${appService.name}/metadata'
-//   kind: 'web'
-//   properties: {
-//     CURRENT_STACK: 'dotnet'
-//   }
-//   dependsOn: [
-//     appService
-//   ]
-// }
+resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${appService.name}/metadata'
+  kind: 'web'
+  properties: {
+    CURRENT_STACK: 'dotnet'
+  }
+  dependsOn: [
+    appService
+  ]
+}

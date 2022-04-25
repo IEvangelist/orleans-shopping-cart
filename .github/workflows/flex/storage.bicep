@@ -1,6 +1,3 @@
-@minLength(3)
-@maxLength(24)
-@description('Lowercase letters and numbers.')
 param name string
 param resourceGroupLocation string
 

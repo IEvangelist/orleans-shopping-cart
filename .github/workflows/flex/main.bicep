@@ -61,7 +61,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'ResourceGroupPlan')
+  name: '${resourceGroupName}-plan'
   location: resourceGroupLocation
   kind: 'web'
   sku: {
@@ -73,7 +73,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
 module silo 'app-service.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'SiloModule')
   params: {
-    appName: replace(resourceGroupName, '-resourcegroup', 'AppSilo')
+    appName: replace(resourceGroupName, '-resourcegroup', '-app-silo')
     resourceGroupLocation: resourceGroupLocation
     appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id
