@@ -74,7 +74,6 @@ module silo 'app-service.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'SiloModule')
   params: {
     appName: replace(resourceGroupName, '-resourcegroup', 'AppSilo')
-    appConfigName: replace(resourceGroupName, '-resourcegroup', 'AppSilo/metadata')
     resourceGroupLocation: resourceGroupLocation
     appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id

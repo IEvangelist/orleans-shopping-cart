@@ -1,17 +1,8 @@
 param appName string
-param appConfigName string
 param resourceGroupLocation string
 param envVars array = []
 param appServicePlanId string
 param vnetSubnetId string
-
-resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: appConfigName
-  kind: 'web'
-  properties: {
-    CURRENT_STACK: 'dotnet'
-  }
-}
 
 resource appService 'Microsoft.Web/sites@2021-03-01' = {
   name: appName
@@ -27,7 +18,15 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
       alwaysOn: true
     }
   }
+}
+
+resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${appService.name}/metadata'
+  kind: 'web'
+  properties: {
+    CURRENT_STACK: 'dotnet'
+  }
   dependsOn: [
-    appServiceConfig
+    appService
   ]
 }
