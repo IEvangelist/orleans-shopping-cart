@@ -5,7 +5,7 @@ param name string
 param resourceGroupLocation string
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: replace(name, '-resourcegroup', 'storage')
+  name: name
   location: resourceGroupLocation
   kind: 'StorageV2'
   sku: {

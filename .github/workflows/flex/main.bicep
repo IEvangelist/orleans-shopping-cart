@@ -4,7 +4,7 @@ param resourceGroupLocation string = resourceGroup().location
 module storage 'storage.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'StorageModule')
   params: {
-    name: replace(resourceGroupName, '-resourcegroup', 'storage')
+    name: replace(resourceGroupName, '-resourcegroup', 'Storage')
     resourceGroupLocation: resourceGroupLocation
   }
 }
