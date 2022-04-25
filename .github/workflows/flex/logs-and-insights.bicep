@@ -1,9 +1,9 @@
-param name string = resourceGroup().name
-param location string = resourceGroup().location
+param resourceGroupName string
+param resourceGroupLocation string
 
 resource logs 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
-  name: '${name}logs'
-  location: location
+  name: replace(resourceGroupName, 'resourcegroup', 'logs')
+  location: resourceGroupLocation
   properties: any({
     retentionInDays: 30
     features: {
@@ -15,9 +15,9 @@ resource logs 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   })
 }
 
-resource appInsightsComponents 'Microsoft.Insights/components@2020-02-02' = {
-  name: replace(name, 'resourcegroup', 'insights')
-  location: location
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: replace(resourceGroupName, 'resourcegroup', 'insights')
+  location: resourceGroupLocation
   kind: 'web'
   properties: {
     Application_Type: 'web'

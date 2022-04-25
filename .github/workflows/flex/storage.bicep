@@ -1,9 +1,9 @@
-param name string
-param location string
+param resourceGroupName string
+param resourceGroupLocation string
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: replace(name, '-resourcegroup', 'storage')
-  location: location
+  name: replace(resourceGroupName, '-resourcegroup', 'storage')
+  location: resourceGroupLocation
   kind: 'StorageV2'
   sku: {
     name: 'Standard_LRS'

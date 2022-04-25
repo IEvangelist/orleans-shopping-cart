@@ -1,11 +1,11 @@
-param name string = resourceGroup().name
-param location string = resourceGroup().location
+param resourceGroupName string = resourceGroup().name
+param resourceGroupLocation string = resourceGroup().location
 
 module storage 'storage.bicep' = {
-  name: toLower('${replace(name, '-resourcegroup', '')}-storage')
+  name: replace(resourceGroupName, '-resourcegroup', 'storage-module')
   params: {
-    name: name
-    location: location
+    resourceGroupName: resourceGroupName
+    resourceGroupLocation: resourceGroupLocation
   }
 }
 
@@ -24,16 +24,16 @@ var silo_config = [
 ]
 
 module logs 'logs-and-insights.bicep' = {
-  name: 'logs-and-insights'
+  name: replace(resourceGroupName, 'resourcegroup', 'logs-and-insights-module')
   params: {
-    name: name
-    location: location
+    resourceGroupName: resourceGroupName
+    resourceGroupLocation: resourceGroupLocation
   }
 }
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
-  name: replace(name, 'resourcegroup', 'vnet')
-  location: location
+  name: replace(resourceGroupName, 'resourcegroup', 'vnet')
+  location: resourceGroupLocation
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -60,8 +60,8 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: '${name}-plan'
-  location: location
+  name: '${resourceGroupName}-plan'
+  location: resourceGroupLocation
   kind: 'app'
   sku: {
     name: 'S1'
@@ -70,12 +70,12 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
 }
 
 module silo 'app-service.bicep' = {
-  name: 'silo'
+  name: replace(resourceGroupName, 'resourcegroup', 'silo-module')
   params: {
-    name: replace(name, 'resourcegroup', 'silo')
+    resourceGroupName: resourceGroupName
     appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id
     envVars: union(shared_config, silo_config)
-    location: location
+    resourceGroupLocation: resourceGroupLocation
   }
 }
