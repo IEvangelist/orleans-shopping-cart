@@ -40,5 +40,5 @@ jobs:
       run: |
         az webapp deploy -n "orleans-app-silo" \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME  }} \
-           --type zip --src-path silo.zip
+          --type zip --src-path silo.zip
 
