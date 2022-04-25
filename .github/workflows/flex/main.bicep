@@ -4,7 +4,7 @@ param resourceGroupLocation string = resourceGroup().location
 module storage 'storage.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'StorageModule')
   params: {
-    name: replace(resourceGroupName, '-resourcegroup', 'Storage')
+    name: replace(resourceGroupName, '-resourcegroup', 'storage')
     resourceGroupLocation: resourceGroupLocation
   }
 }
@@ -73,7 +73,8 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
 module silo 'app-service.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'SiloModule')
   params: {
-    resourceGroupName: resourceGroupName
+    appName: replace(resourceGroupName, '-resourcegroup', 'AppSilo')
+    appConfigName: replace(resourceGroupName, '-resourcegroup', 'AppSiloMetadata')
     resourceGroupLocation: resourceGroupLocation
     appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id

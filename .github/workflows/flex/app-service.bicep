@@ -1,11 +1,12 @@
-param resourceGroupName string
+param appName string
+param appConfigName string
 param resourceGroupLocation string
 param envVars array = []
 param appServicePlanId string
 param vnetSubnetId string
 
 resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'SiloMetadata')
+  name: appConfigName
   kind: 'web'
   properties: {
     CURRENT_STACK: 'dotnet'
@@ -13,7 +14,7 @@ resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
 }
 
 resource appService 'Microsoft.Web/sites@2021-03-01' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'AppSilo')
+  name: appName
   location: resourceGroupLocation
   properties: {
     serverFarmId: appServicePlanId
