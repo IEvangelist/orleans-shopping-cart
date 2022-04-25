@@ -5,7 +5,7 @@ param appServicePlanId string
 param vnetSubnetId string
 
 resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${replace(resourceGroupName, 'resourcegroup', 'silo')}/metadata'
+  name: replace(resourceGroupName, '-resourcegroup', 'SiloMetadata')
   kind: 'web'
   properties: {
     CURRENT_STACK: 'dotnet'
@@ -13,7 +13,7 @@ resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
 }
 
 resource appService 'Microsoft.Web/sites@2021-03-01' = {
-  name: replace(resourceGroupName, 'resourcegroup', 'silo')
+  name: replace(resourceGroupName, '-resourcegroup', 'AppSilo')
   location: resourceGroupLocation
   properties: {
     serverFarmId: appServicePlanId

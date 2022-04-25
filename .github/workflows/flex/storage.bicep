@@ -1,8 +1,11 @@
-param resourceGroupName string
+@minLength(3)
+@maxLength(24)
+@description('Lowercase letters and numbers.')
+param name string
 param resourceGroupLocation string
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'storage')
+  name: replace(name, '-resourcegroup', 'storage')
   location: resourceGroupLocation
   kind: 'StorageV2'
   sku: {

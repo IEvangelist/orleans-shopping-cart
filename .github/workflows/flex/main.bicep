@@ -2,13 +2,12 @@ param resourceGroupName string = resourceGroup().name
 param resourceGroupLocation string = resourceGroup().location
 
 module storage 'storage.bicep' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'storage-module')
+  name: replace(resourceGroupName, '-resourcegroup', 'StorageModule')
   params: {
-    resourceGroupName: resourceGroupName
+    name: replace(resourceGroupName, '-resourcegroup', 'storage')
     resourceGroupLocation: resourceGroupLocation
   }
 }
-
 
 var sharedConfig = [
   {
@@ -25,9 +24,10 @@ var siloConfig = [
 ]
 
 module logs 'logs-and-insights.bicep' = {
-  name: replace(resourceGroupName, 'resourcegroup', 'logs-and-insights-module')
+  name: replace(resourceGroupName, '-resourcegroup', 'LogsAndInsightsModule')
   params: {
-    resourceGroupName: resourceGroupName
+    operationalInsightsName: replace(resourceGroupName, 'resourcegroup', 'logs')
+    appInsightsName: replace(resourceGroupName, 'resourcegroup', 'insights')
     resourceGroupLocation: resourceGroupLocation
   }
 }
@@ -61,7 +61,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: '${resourceGroupName}-plan'
+  name: replace(resourceGroupName, '-resourcegroup', 'ResourceGroupPlan')
   location: resourceGroupLocation
   kind: 'web'
   sku: {
@@ -71,7 +71,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
 }
 
 module silo 'app-service.bicep' = {
-  name: replace(resourceGroupName, 'resourcegroup', 'silo-module')
+  name: replace(resourceGroupName, '-resourcegroup', 'SiloModule')
   params: {
     resourceGroupName: resourceGroupName
     resourceGroupLocation: resourceGroupLocation
