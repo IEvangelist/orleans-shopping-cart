@@ -16,7 +16,7 @@ resource logs 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
 }
 
 resource appInsightsComponents 'Microsoft.Insights/components@2020-02-02' = {
-  name: '${name}ai'
+  name: replace(name, 'resourcegroup', 'insights')
   location: location
   kind: 'web'
   properties: {

@@ -2,7 +2,7 @@ param name string = resourceGroup().name
 param location string = resourceGroup().location
 
 module storage 'storage.bicep' = {
-  name: toLower('${name}strg')
+  name: toLower('${replace(name, '-resourcegroup', '')}-storage')
   params: {
     name: name
     location: location
@@ -19,7 +19,7 @@ var shared_config = [
 var silo_config = [
   {
     name: 'ORLEANS_SILO_NAME'
-    value: 'Orleans Silo'
+    value: 'Orleans Shopping Cart'
   }
 ]
 
@@ -32,7 +32,7 @@ module logs 'logs-and-insights.bicep' = {
 }
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
-  name: '${name}vnet'
+  name: replace(name, 'resourcegroup', 'vnet')
   location: location
   properties: {
     addressSpace: {
@@ -60,7 +60,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: '${name}plan'
+  name: '${name}-plan'
   location: location
   kind: 'app'
   sku: {
@@ -72,7 +72,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
 module silo 'app-service.bicep' = {
   name: 'silo'
   params: {
-    name: '${name}-silo'
+    name: replace(name, 'resourcegroup', 'silo')
     appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id
     envVars: union(shared_config, silo_config)

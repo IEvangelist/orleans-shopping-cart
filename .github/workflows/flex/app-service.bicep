@@ -1,12 +1,11 @@
-param name string = resourceGroup().name
-param location string = resourceGroup().location
+param name string
+param location string
 param envVars array = []
 param appServicePlanId string
 param vnetSubnetId string
 
-resource app_service 'Microsoft.Web/sites@2021-03-01' = {
+resource appService 'Microsoft.Web/sites@2021-03-01' = {
   name: name
-  kind: 'app'
   location: location
   properties: {
     serverFarmId: appServicePlanId
@@ -18,5 +17,16 @@ resource app_service 'Microsoft.Web/sites@2021-03-01' = {
       netFrameworkVersion: 'v6.0'
       alwaysOn: true
     }
+  }
+  dependsOn: [
+    appServiceStack
+  ]
+}
+
+resource appServiceStack 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${name}/metadata'
+  kind: 'web'
+  properties: {
+    CURRENT_STACK: 'dotnet'
   }
 }
