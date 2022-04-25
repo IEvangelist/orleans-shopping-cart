@@ -7,6 +7,7 @@ param vnetSubnetId string
 resource appService 'Microsoft.Web/sites@2021-03-01' = {
   name: appName
   location: resourceGroupLocation
+  kind: 'web'
   properties: {
     serverFarmId: appServicePlanId
     virtualNetworkSubnetId: vnetSubnetId
@@ -26,7 +27,4 @@ resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
   properties: {
     CURRENT_STACK: 'dotnet'
   }
-  dependsOn: [
-    appService
-  ]
 }

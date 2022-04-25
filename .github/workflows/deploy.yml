@@ -38,7 +38,7 @@ jobs:
 
     - name: Webapp deploy
       run: |
-        az webapp deploy -n "${{ env.AZURE_RESOURCE_GROUP_NAME }}-silo" \
+        az webapp deploy -n "orleans-app-silo" \
           -g ${{ env.AZURE_RESOURCE_GROUP_NAME  }} \
           --src-path silo.zip
 
