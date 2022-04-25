@@ -9,14 +9,15 @@ module storage 'storage.bicep' = {
   }
 }
 
-var shared_config = [
+
+var sharedConfig = [
   {
     name: 'ORLEANS_AZURE_STORAGE_CONNECTION_STRING'
     value: format('DefaultEndpointsProtocol=https;AccountName=${storage.outputs.storageName};AccountKey=${storage.outputs.accountKey};EndpointSuffix=core.windows.net')
   }
 ]
 
-var silo_config = [
+var siloConfig = [
   {
     name: 'ORLEANS_SILO_NAME'
     value: 'Orleans Shopping Cart'
@@ -62,7 +63,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: '${resourceGroupName}-plan'
   location: resourceGroupLocation
-  kind: 'app'
+  kind: 'web'
   sku: {
     name: 'S1'
     capacity: 1
@@ -73,9 +74,9 @@ module silo 'app-service.bicep' = {
   name: replace(resourceGroupName, 'resourcegroup', 'silo-module')
   params: {
     resourceGroupName: resourceGroupName
+    resourceGroupLocation: resourceGroupLocation
     appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id
-    envVars: union(shared_config, silo_config)
-    resourceGroupLocation: resourceGroupLocation
+    envVars: union(sharedConfig, siloConfig)
   }
 }

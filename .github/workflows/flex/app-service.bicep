@@ -4,6 +4,14 @@ param envVars array = []
 param appServicePlanId string
 param vnetSubnetId string
 
+resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${replace(resourceGroupName, 'resourcegroup', 'silo')}/metadata'
+  kind: 'web'
+  properties: {
+    CURRENT_STACK: 'dotnet'
+  }
+}
+
 resource appService 'Microsoft.Web/sites@2021-03-01' = {
   name: replace(resourceGroupName, 'resourcegroup', 'silo')
   location: resourceGroupLocation
@@ -19,14 +27,6 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
     }
   }
   dependsOn: [
-    appServiceStack
+    appServiceConfig
   ]
-}
-
-resource appServiceStack 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${replace(resourceGroupName, 'resourcegroup', 'silo')}/metadata'
-  kind: 'web'
-  properties: {
-    CURRENT_STACK: 'dotnet'
-  }
 }
