@@ -40,7 +40,8 @@ jobs:
       run: |
         az webapp config appsettings set --name "orleans-app-silo" \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME  }} \
-          --settings WEBSITE_RUN_FROM_PACKAGE="1"
+          --settings WEBSITE_RUN_FROM_PACKAGE="1" \
+          --only-show-errors
 
     - name: Webapp deploy
       run: |
