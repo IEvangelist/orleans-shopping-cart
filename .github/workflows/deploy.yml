@@ -6,7 +6,7 @@ on:
     - bradyg
 
 env:
-  AZURE_RESOURCE_GROUP_NAME: bradyg-shopping
+  AZURE_RESOURCE_GROUP_NAME: bradygshop
   AZURE_RESOURCE_GROUP_LOCATION: eastus
 
 jobs:
