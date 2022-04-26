@@ -15,9 +15,9 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
       vnetPrivatePortsCount: 2
       webSocketsEnabled: true
       appSettings: envVars
-      netFrameworkVersion: 'v6.0'
-      linuxFxVersion: 'DOTNET|6.0'
+      linuxFxVersion: 'DOTNETCORE|6.0'
       alwaysOn: true
+      httpsOnly: true
     }
   }
 }
