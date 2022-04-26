@@ -24,7 +24,7 @@ var siloConfig = [
 ]
 
 module logs 'logs-and-insights.bicep' = {
-  name: toLower('${resourceGroup().name}strg')
+  name: toLower('${resourceGroup().name}monitoring')
   params: {
     operationalInsightsName: toLower('${resourceGroup().name}logs')
     appInsightsName: toLower('${resourceGroup().name}ai')
