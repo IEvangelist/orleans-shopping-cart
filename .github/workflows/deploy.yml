@@ -36,9 +36,14 @@ jobs:
           --parameters resourceGroupName=${{ env.AZURE_RESOURCE_GROUP_NAME }} \
             resourceGroupLocation=${{ env.AZURE_RESOURCE_GROUP_LOCATION }}
 
+    - name: Configure running package
+      run: |
+        az webapp config appsettings set --name "orleans-app-silo" \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME  }} \
+          --settings WEBSITE_RUN_FROM_PACKAGE="1"
+
     - name: Webapp deploy
       run: |
-        az webapp deploy -n "orleans-app-silo" \
+        az webapp deployment source config-zip --name "orleans-app-silo" \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME  }} \
-          --type zip --src-path silo.zip
-
+          --src silo.zip
