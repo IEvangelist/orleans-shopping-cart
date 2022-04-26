@@ -10,14 +10,16 @@ await Host.CreateDefaultBuilder(args)
             }
             else
             {
+                const string key = "ORLEANS_AZURE_STORAGE_CONNECTION_STRING";
+                var connectionString = context.Configuration[key];
+
+                builder.UseAzureStorageClustering(                    
+                    options => options.ConfigureTableServiceClient(connectionString));
                 builder.AddAzureTableGrainStorage(
                     "shopping-cart",
                     options =>
                     {
-                        const string key = "ORLEANS_AZURE_STORAGE_CONNECTION_STRING";
-                        var connectionString = context.Configuration[key];
                         options.ConfigureTableServiceClient(connectionString);
-                        options.UseJson = true;
                     });
             }
         })
