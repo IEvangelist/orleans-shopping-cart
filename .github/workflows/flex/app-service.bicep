@@ -7,7 +7,7 @@ param vnetSubnetId string
 resource appService 'Microsoft.Web/sites@2021-03-01' = {
   name: appName
   location: resourceGroupLocation
-  kind: 'linux'
+  kind: 'app,linux'
   properties: {
     serverFarmId: appServicePlanId
     virtualNetworkSubnetId: vnetSubnetId
@@ -15,7 +15,7 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
       vnetPrivatePortsCount: 2
       webSocketsEnabled: true
       appSettings: envVars
-      linuxFxVersion: 'DOTNETCORE|6.0'
+      linuxFxVersion: 'DOTNET|6.0'
       alwaysOn: true
       httpsOnly: true
     }
