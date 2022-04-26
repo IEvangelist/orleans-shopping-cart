@@ -27,6 +27,14 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Create resource group
+      uses: azure/CLI@v1
+      with:
+        inlineScript: >
+          echo "Creating resource group in Azure"
+
+          az group create -l ${{ env.AZURE_RESOURCE_GROUP_LOCATION }} -n ${{ env.AZURE_RESOURCE_GROUP_NAME }}
     
     - name: Flex bicep
       run: |
