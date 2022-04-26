@@ -1,27 +1,12 @@
-param resourceGroupName string = resourceGroup().name
 param resourceGroupLocation string = resourceGroup().location
 
 module storage 'storage.bicep' = {
   name: toLower('${resourceGroup().name}strg')
   params: {
-    name: replace(resourceGroupName, '-resourcegroup', 'storage')
+    name: toLower('${resourceGroup().name}strg')
     resourceGroupLocation: resourceGroupLocation
   }
 }
-
-var sharedConfig = [
-  {
-    name: 'ORLEANS_AZURE_STORAGE_CONNECTION_STRING'
-    value: format('DefaultEndpointsProtocol=https;AccountName=${storage.outputs.storageName};AccountKey=${storage.outputs.accountKey};EndpointSuffix=core.windows.net')
-  }
-]
-
-var siloConfig = [
-  {
-    name: 'ORLEANS_SILO_NAME'
-    value: 'Orleans Shopping Cart'
-  }
-]
 
 module logs 'logs-and-insights.bicep' = {
   name: toLower('${resourceGroup().name}monitoring')
@@ -31,6 +16,21 @@ module logs 'logs-and-insights.bicep' = {
     resourceGroupLocation: resourceGroupLocation
   }
 }
+
+var siloConfig = [
+  {
+    name: 'ORLEANS_SILO_NAME'
+    value: 'Orleans Shopping Cart'
+  }
+  {
+    name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+    value: logs.outputs.aiConnectionString
+  }
+  {
+    name: 'ORLEANS_AZURE_STORAGE_CONNECTION_STRING'
+    value: format('DefaultEndpointsProtocol=https;AccountName=${storage.outputs.storageName};AccountKey=${storage.outputs.accountKey};EndpointSuffix=core.windows.net')
+  }
+]
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
   name: toLower('${resourceGroup().name}vnet')
@@ -77,6 +77,6 @@ module silo 'app-service.bicep' = {
     resourceGroupLocation: resourceGroupLocation
     appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id
-    envVars: union(sharedConfig, siloConfig)
+    envVars: siloConfig
   }
 }

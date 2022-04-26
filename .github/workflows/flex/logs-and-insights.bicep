@@ -25,3 +25,5 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
     WorkspaceResourceId: logs.id
   }
 }
+
+output aiConnectionString string = appInsights.properties.ConnectionString
