@@ -3,11 +3,11 @@ name: Deploy to Azure App Service
 on:
   push:
     branches:
-    - main
+    - bradyg
 
 env:
-  AZURE_RESOURCE_GROUP_NAME: orleans-resourcegroup
-  AZURE_RESOURCE_GROUP_LOCATION: centralus
+  AZURE_RESOURCE_GROUP_NAME: bradyg-shopping
+  AZURE_RESOURCE_GROUP_LOCATION: eastus
 
 jobs:
   build-and-deploy:
