@@ -17,7 +17,6 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
       appSettings: envVars
       linuxFxVersion: 'DOTNET|6.0'
       alwaysOn: true
-      httpsOnly: true
     }
   }
 }
