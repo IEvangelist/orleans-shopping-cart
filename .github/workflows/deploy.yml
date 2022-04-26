@@ -6,7 +6,7 @@ on:
     - bradyg
 
 env:
-  AZURE_RESOURCE_GROUP_NAME: shoporleans01
+  AZURE_RESOURCE_GROUP_NAME: shoporleans02
   AZURE_RESOURCE_GROUP_LOCATION: eastus
 
 jobs:
@@ -41,8 +41,7 @@ jobs:
         az deployment group create \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME }} \
           --template-file '.github/workflows/flex/main.bicep' \
-          --parameters resourceGroupName=${{ env.AZURE_RESOURCE_GROUP_NAME }} \
-            resourceGroupLocation=${{ env.AZURE_RESOURCE_GROUP_LOCATION }} --debug
+          --parameters resourceGroupLocation=${{ env.AZURE_RESOURCE_GROUP_LOCATION }} --debug
 
     - name: Webapp deploy
       run: |
