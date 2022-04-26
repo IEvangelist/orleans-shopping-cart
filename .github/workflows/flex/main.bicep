@@ -63,7 +63,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: '${resourceGroupName}-plan'
   location: resourceGroupLocation
-  kind: 'linux'
+  kind: 'app,linux'
   sku: {
     name: 'S1'
     capacity: 1
