@@ -2,7 +2,7 @@ param resourceGroupName string = resourceGroup().name
 param resourceGroupLocation string = resourceGroup().location
 
 module storage 'storage.bicep' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'StorageModule')
+  name: toLower('${resourceGroup().name}strg')
   params: {
     name: replace(resourceGroupName, '-resourcegroup', 'storage')
     resourceGroupLocation: resourceGroupLocation
@@ -24,16 +24,16 @@ var siloConfig = [
 ]
 
 module logs 'logs-and-insights.bicep' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'LogsAndInsightsModule')
+  name: toLower('${resourceGroup().name}strg')
   params: {
-    operationalInsightsName: replace(resourceGroupName, 'resourcegroup', 'logs')
-    appInsightsName: replace(resourceGroupName, 'resourcegroup', 'insights')
+    operationalInsightsName: toLower('${resourceGroup().name}logs')
+    appInsightsName: toLower('${resourceGroup().name}ai')
     resourceGroupLocation: resourceGroupLocation
   }
 }
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
-  name: replace(resourceGroupName, 'resourcegroup', 'vnet')
+  name: toLower('${resourceGroup().name}vnet')
   location: resourceGroupLocation
   properties: {
     addressSpace: {
@@ -61,7 +61,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: '${resourceGroupName}-plan'
+  name: toLower('${resourceGroup().name}plan')
   location: resourceGroupLocation
   kind: 'app'
   sku: {
@@ -71,9 +71,9 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
 }
 
 module silo 'app-service.bicep' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'SiloModule')
+  name: toLower('${resourceGroup().name}silo')
   params: {
-    appName: replace(resourceGroupName, '-resourcegroup', '-app-silo')
+    appName: toLower('${resourceGroup().name}silo')
     resourceGroupLocation: resourceGroupLocation
     appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id
