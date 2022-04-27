@@ -9,20 +9,6 @@ module storage 'storage.bicep' = {
   }
 }
 
-var sharedConfig = [
-  {
-    name: 'ORLEANS_AZURE_STORAGE_CONNECTION_STRING'
-    value: format('DefaultEndpointsProtocol=https;AccountName=${storage.outputs.storageName};AccountKey=${storage.outputs.accountKey};EndpointSuffix=core.windows.net')
-  }
-]
-
-var siloConfig = [
-  {
-    name: 'ORLEANS_SILO_NAME'
-    value: 'Orleans Shopping Cart'
-  }
-]
-
 module logs 'logs-and-insights.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'LogsAndInsightsModule')
   params: {
@@ -31,6 +17,21 @@ module logs 'logs-and-insights.bicep' = {
     resourceGroupLocation: resourceGroupLocation
   }
 }
+
+var siloConfig = [
+  {
+    name: 'ORLEANS_SILO_NAME'
+    value: 'Orleans Shopping Cart'
+  }
+  {
+    name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+    value: logs.outputs.aiConnectionString
+  }
+  {
+    name: 'ORLEANS_AZURE_STORAGE_CONNECTION_STRING'
+    value: format('DefaultEndpointsProtocol=https;AccountName=${storage.outputs.storageName};AccountKey=${storage.outputs.accountKey};EndpointSuffix=core.windows.net')
+  }
+]
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
   name: replace(resourceGroupName, 'resourcegroup', 'vnet')

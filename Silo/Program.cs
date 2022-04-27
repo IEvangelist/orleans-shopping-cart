@@ -10,17 +10,29 @@ await Host.CreateDefaultBuilder(args)
             }
             else
             {
-                const string key = "ORLEANS_AZURE_STORAGE_CONNECTION_STRING";
-                var connectionString = context.Configuration[key];
+                var endpointAddress =
+                    IPAddress.Parse(context.Configuration["WEBSITE_PRIVATE_IP"]);
+                var strPorts =
+                    context.Configuration["WEBSITE_PRIVATE_PORTS"].Split(',');
+                if (strPorts.Length < 2)
+                    throw new Exception("Insufficient private ports configured.");
+                var (siloPort, gatewayPort) =
+                    (int.Parse(strPorts[0]), int.Parse(strPorts[1]));
+                var connectionString =
+                    context.Configuration["ORLEANS_AZURE_STORAGE_CONNECTION_STRING"];
 
-                builder.UseAzureStorageClustering(                    
+                builder
+                    .ConfigureEndpoints(endpointAddress, siloPort, gatewayPort)
+                    .Configure<ClusterOptions>(
+                        options =>
+                        {
+                            options.ClusterId = "ShoppingCartCluster";
+                            options.ServiceId = nameof(ShoppingCartService);
+                        }).UseAzureStorageClustering(                    
                     options => options.ConfigureTableServiceClient(connectionString));
                 builder.AddAzureTableGrainStorage(
-                    "shopping-cart",
-                    options =>
-                    {
-                        options.ConfigureTableServiceClient(connectionString);
-                    });
+                    "shopping-cart",                    
+                    options => options.ConfigureTableServiceClient(connectionString));
             }
         })
     .ConfigureWebHostDefaults(
