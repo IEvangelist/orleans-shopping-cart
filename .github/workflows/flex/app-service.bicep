@@ -52,11 +52,4 @@ resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
   properties: {
     CURRENT_STACK: 'dotnet'
   }
-  dependsOn: [
-    appServiceExtensions
-  ]
-}
-
-resource appServiceExtensions 'Microsoft.Web/sites/siteextensions@2021-03-01' = {
-  name: '${appName}/Microsoft.ApplicationInsights.AzureWebsites'
 }
