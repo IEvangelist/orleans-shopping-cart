@@ -1,11 +1,12 @@
 param operationalInsightsName string
+param appServiceName string
 param appInsightsName string
 param resourceGroupLocation string
 
 resource logs 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: operationalInsightsName
   location: resourceGroupLocation
-  properties: any({
+  properties: {
     retentionInDays: 30
     features: {
       searchVersion: 1
@@ -13,7 +14,24 @@ resource logs 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
     sku: {
       name: 'PerGB2018'
     }
-  })
+  }
+}
+
+resource appServiceSettings 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${appServiceName}/appsettings'
+  properties: {
+    APPINSIGHTS_INSTRUMENTATIONKEY: appInsights.properties.InstrumentationKey
+  }
+  dependsOn: [
+    appServiceExtensions
+  ]
+}
+
+resource appServiceExtensions 'Microsoft.Web/sites/siteextensions@2021-03-01' = {
+  name: '${appServiceName}/Microsoft.ApplicationInsights.AzureWebsites'
+  dependsOn: [
+    appInsights
+  ]
 }
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {

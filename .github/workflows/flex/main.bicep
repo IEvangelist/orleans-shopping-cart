@@ -1,7 +1,7 @@
 param resourceGroupName string = resourceGroup().name
 param resourceGroupLocation string = resourceGroup().location
 
-module storage 'storage.bicep' = {
+module storageModule 'storage.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'StorageModule')
   params: {
     name: replace(resourceGroupName, '-resourcegroup', 'storage')
@@ -9,10 +9,11 @@ module storage 'storage.bicep' = {
   }
 }
 
-module logs 'logs-and-insights.bicep' = {
+module logsModule 'logs-and-insights.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'LogsAndInsightsModule')
   params: {
     operationalInsightsName: replace(resourceGroupName, 'resourcegroup', 'logs')
+    appServiceName: replace(resourceGroupName, '-resourcegroup', '-app-silo')
     appInsightsName: replace(resourceGroupName, 'resourcegroup', 'insights')
     resourceGroupLocation: resourceGroupLocation
   }
@@ -25,11 +26,11 @@ var siloConfig = [
   }
   {
     name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-    value: logs.outputs.aiConnectionString
+    value: logsModule.outputs.aiConnectionString
   }
   {
     name: 'ORLEANS_AZURE_STORAGE_CONNECTION_STRING'
-    value: 'DefaultEndpointsProtocol=https;AccountName=${storage.outputs.storageName};AccountKey=${storage.outputs.accountKey};EndpointSuffix=core.windows.net'
+    value: storageModule.outputs.connectionString
   }
 ]
 
@@ -61,22 +62,12 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
   }
 }
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: '${resourceGroupName}-plan'
-  location: resourceGroupLocation
-  kind: 'app'
-  sku: {
-    name: 'S1'
-    capacity: 1
-  }
-}
-
-module silo 'app-service.bicep' = {
+module siloModule 'app-service.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'SiloModule')
   params: {
     appName: replace(resourceGroupName, '-resourcegroup', '-app-silo')
+    resourceGroupName: resourceGroupName
     resourceGroupLocation: resourceGroupLocation
-    appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id
     envVars: siloConfig
   }
