@@ -1,7 +1,6 @@
 param appName string
 param resourceGroupName string
 param resourceGroupLocation string
-param envVars array = []
 param vnetSubnetId string
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
@@ -25,33 +24,8 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
     siteConfig: {
       vnetPrivatePortsCount: 2
       webSocketsEnabled: true
-      appSettings: envVars
       netFrameworkVersion: 'v6.0'
       alwaysOn: true
-    }
-  }
-}
-
-resource appServiceLogging 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${appService.name}/logs'
-  properties: {
-    CURRENT_STACK: 'dotnet'
-    applicationLogs: {
-      fileSystem: {
-        level: 'Warning'
-      }
-    }
-    httpLogs: {
-      fileSystem: {
-        retentionInMb: 40
-        enabled: true
-      }
-    }
-    failedRequestsTracing: {
-      enabled: true
-    }
-    detailedErrorMessages: {
-      enabled: true
     }
   }
 }
