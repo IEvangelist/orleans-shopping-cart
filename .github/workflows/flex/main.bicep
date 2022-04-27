@@ -13,14 +13,9 @@ module logsModule 'logs-and-insights.bicep' = {
   name: replace(resourceGroupName, '-resourcegroup', 'LogsAndInsightsModule')
   params: {
     operationalInsightsName: replace(resourceGroupName, 'resourcegroup', 'logs')
-    appServiceName: replace(resourceGroupName, '-resourcegroup', '-app-silo')
     appInsightsName: replace(resourceGroupName, 'resourcegroup', 'insights')
     resourceGroupLocation: resourceGroupLocation
-    storageConnectionString: storageModule.outputs.connectionString
   }
-  dependsOn: [
-    siloModule
-  ]
 }
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
@@ -58,5 +53,8 @@ module siloModule 'app-service.bicep' = {
     resourceGroupName: resourceGroupName
     resourceGroupLocation: resourceGroupLocation
     vnetSubnetId: vnet.properties.subnets[0].id
+    appInsightsConnectionString: logsModule.outputs.appInsightsConnectionString
+    appInsightsInstrumentationKey: logsModule.outputs.appInsightsInstrumentationKey
+    storageConnectionString: storageModule.outputs.connectionString
   }
 }

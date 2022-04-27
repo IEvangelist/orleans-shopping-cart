@@ -2,6 +2,9 @@ param appName string
 param resourceGroupName string
 param resourceGroupLocation string
 param vnetSubnetId string
+param appInsightsInstrumentationKey string
+param appInsightsConnectionString string
+param storageConnectionString string
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: '${resourceGroupName}-plan'
@@ -25,7 +28,52 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
       vnetPrivatePortsCount: 2
       webSocketsEnabled: true
       netFrameworkVersion: 'v6.0'
+      appSettings: [
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsConnectionString
+        }
+        {
+          name: 'ORLEANS_AZURE_STORAGE_CONNECTION_STRING'
+          value: storageConnectionString
+        }
+      ]
       alwaysOn: true
     }
   }
+}
+
+resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${appService.name}/metadata'
+  properties: {
+    CURRENT_STACK: 'dotnet'
+    applicationLogs: {
+      fileSystem: {
+        level: 'Warning'
+      }
+    }
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 40
+        enabled: true
+      }
+    }
+    failedRequestsTracing: {
+      enabled: true
+    }
+    detailedErrorMessages: {
+      enabled: true
+    }
+  }
+  dependsOn: [
+    appServiceExtensions
+  ]
+}
+
+resource appServiceExtensions 'Microsoft.Web/sites/siteextensions@2021-03-01' = {
+  name: '${appName}/Microsoft.ApplicationInsights.AzureWebsites'
 }
