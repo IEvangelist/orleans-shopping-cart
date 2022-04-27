@@ -78,6 +78,6 @@ module silo 'app-service.bicep' = {
     resourceGroupLocation: resourceGroupLocation
     appServicePlanId: appServicePlan.id
     vnetSubnetId: vnet.properties.subnets[0].id
-    envVars: union(sharedConfig, siloConfig)
+    envVars: siloConfig
   }
 }

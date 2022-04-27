@@ -21,7 +21,7 @@ jobs:
         dotnet-version: 6.0.x
 
     - name: .NET publish shopping cart app
-      run: dotnet publish ./Silo/Orleans.ShoppingCart.Silo.csproj
+      run: dotnet publish ./Silo/Orleans.ShoppingCart.Silo.csproj --configuration Release
 
     - name: Login to Azure
       uses: azure/login@v1
