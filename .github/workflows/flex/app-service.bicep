@@ -51,23 +51,6 @@ resource appServiceConfig 'Microsoft.Web/sites/config@2021-03-01' = {
   name: '${appService.name}/metadata'
   properties: {
     CURRENT_STACK: 'dotnet'
-    applicationLogs: {
-      fileSystem: {
-        level: 'Warning'
-      }
-    }
-    httpLogs: {
-      fileSystem: {
-        retentionInMb: 40
-        enabled: true
-      }
-    }
-    failedRequestsTracing: {
-      enabled: true
-    }
-    detailedErrorMessages: {
-      enabled: true
-    }
   }
   dependsOn: [
     appServiceExtensions

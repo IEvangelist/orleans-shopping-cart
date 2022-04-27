@@ -34,11 +34,12 @@ jobs:
           --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME }} \
           --template-file '.github/workflows/flex/main.bicep' \
           --parameters resourceGroupName=${{ env.AZURE_RESOURCE_GROUP_NAME }} \
-            resourceGroupLocation=${{ env.AZURE_RESOURCE_GROUP_LOCATION }}
+            resourceGroupLocation=${{ env.AZURE_RESOURCE_GROUP_LOCATION }} \
+          --debug
 
     - name: Webapp deploy
       run: |
         az webapp deploy --name "orleans-app-silo" \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME  }} \
           --clean true --restart true \
-          --type zip --src-path silo.zip
+          --type zip --src-path silo.zip --debug

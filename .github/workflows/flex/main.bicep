@@ -2,7 +2,7 @@ param resourceGroupName string = resourceGroup().name
 param resourceGroupLocation string = resourceGroup().location
 
 module storageModule 'storage.bicep' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'StorageModule')
+  name: 'orleansStorageModule'
   params: {
     name: replace(resourceGroupName, '-resourcegroup', 'storage')
     resourceGroupLocation: resourceGroupLocation
@@ -10,7 +10,7 @@ module storageModule 'storage.bicep' = {
 }
 
 module logsModule 'logs-and-insights.bicep' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'LogsAndInsightsModule')
+  name: 'orleansLogModule'
   params: {
     operationalInsightsName: replace(resourceGroupName, 'resourcegroup', 'logs')
     appInsightsName: replace(resourceGroupName, 'resourcegroup', 'insights')
@@ -19,7 +19,7 @@ module logsModule 'logs-and-insights.bicep' = {
 }
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
-  name: replace(resourceGroupName, 'resourcegroup', 'vnet')
+  name: 'orleans-vnet'
   location: resourceGroupLocation
   properties: {
     addressSpace: {
@@ -47,7 +47,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 }
 
 module siloModule 'app-service.bicep' = {
-  name: replace(resourceGroupName, '-resourcegroup', 'SiloModule')
+  name: 'orleansSiloModule'
   params: {
     appName: replace(resourceGroupName, '-resourcegroup', '-app-silo')
     resourceGroupName: resourceGroupName
