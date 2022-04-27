@@ -17,16 +17,15 @@ module logsModule 'logs-and-insights.bicep' = {
     appInsightsName: replace(resourceGroupName, 'resourcegroup', 'insights')
     resourceGroupLocation: resourceGroupLocation
   }
+  dependsOn: [
+    siloModule
+  ]
 }
 
 var siloConfig = [
   {
     name: 'ORLEANS_SILO_NAME'
     value: 'Orleans Shopping Cart'
-  }
-  {
-    name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-    value: logsModule.outputs.aiConnectionString
   }
   {
     name: 'ORLEANS_AZURE_STORAGE_CONNECTION_STRING'
