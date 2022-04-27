@@ -16,6 +16,8 @@
         </EditForm>
     </DialogContent>
     <DialogActions>
+        <MudButton OnClick=@Bogus Color=Color.Tertiary Variant=Variant.Filled
+                   Size=Size.Large Disabled=@_isSaving>Bogus</MudButton>
         <MudButton OnClick=@Close Color=Color.Secondary Variant=Variant.Filled
                    Size=Size.Large Disabled=@_isSaving>Cancel</MudButton>
         <MudButton StartIcon=@Icons.Filled.Save
@@ -47,14 +49,13 @@
     [Inject]
     public IDialogService DialogService { get; set; } = null!;
 
-    public void Open(string title)
-    {
-        DialogService.Show<ManageProductModal>(title);
-    }
+    public void Open(string title) => DialogService.Show<ManageProductModal>(title);
 
     public void Close() => MudDialog?.Cancel();
 
-    async Task OnValidSubmitAsync()
+    private void Bogus() => Product = Product.GetBogusFaker().Generate();
+
+    private async Task OnValidSubmitAsync()
     {
         if (Product is not null && ProductUpdated.HasDelegate)
         {
