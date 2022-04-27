@@ -29,7 +29,7 @@ var siloConfig = [
   }
   {
     name: 'ORLEANS_AZURE_STORAGE_CONNECTION_STRING'
-    value: format('DefaultEndpointsProtocol=https;AccountName=${storage.outputs.storageName};AccountKey=${storage.outputs.accountKey};EndpointSuffix=core.windows.net')
+    value: 'DefaultEndpointsProtocol=https;AccountName=${storage.outputs.storageName};AccountKey=${storage.outputs.accountKey};EndpointSuffix=core.windows.net'
   }
 ]
 
