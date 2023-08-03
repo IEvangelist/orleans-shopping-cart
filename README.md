@@ -1,5 +1,8 @@
 # Microsoft Orleans: Shopping Cart
 
+> [!WARNING]
+> This is no longer being maintained, please use this instead: <https://github.com/Azure-Samples/Orleans-Cluster-on-Azure-App-Service>
+
 A canonical shopping cart sample application, built using Microsoft Orleans. This app shows the following features:
 
 - **Shopping cart**: A simple shopping cart application that uses Orleans for its cross-platform framework support, and its scalable distributed applications capabilities.
